@@ -1,0 +1,17 @@
+CServer/.vscode/
+Net/.vs/
+Net/AlpacaDiscovery/obj/
+Net/CoreDiscovery/.vs/
+Net/CoreDiscovery/bin/
+Net/AlpacaDiscovery/bin/
+Net/CoreDiscovery/linux/
+Net/CoreDiscovery/osx/
+Net/CoreServer/bin/
+Net/CoreServer/linux/
+Net/CoreServer/obj/
+Net/CoreServer/osx/
+Net/FxDiscovery/bin/
+Net/FxDiscovery/obj/
+Net/FxServer/obj/
+Python/.vscode/
+Net/CoreDiscovery/obj/
