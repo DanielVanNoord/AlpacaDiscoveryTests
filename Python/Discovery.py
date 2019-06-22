@@ -1,7 +1,6 @@
-# (c) 2019 Daniel Van Noord
-# This code is licensed under MIT license (see License.txt for details)
-
 import socket
+import netifaces
+
 port = 32227
 
 server_address = ('255.255.255.255', port) #broadcast to discovery port
@@ -21,7 +20,12 @@ except:
 AlpacaDiscovery = "alpaca discovery"
 AlpacaResponse = "alpaca here"
 
-sock.sendto(AlpacaDiscovery.encode(), server_address)
+for interface in netifaces.interfaces():
+        for interfacedata in netifaces.ifaddresses(interface): 
+                if netifaces.AF_INET == interfacedata:
+                        for ip in netifaces.ifaddresses(interface)[netifaces.AF_INET]:
+                                if('broadcast' in ip):
+                                    sock.sendto(AlpacaDiscovery.encode(), (ip['broadcast'], port))
 
 while True:
     data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
