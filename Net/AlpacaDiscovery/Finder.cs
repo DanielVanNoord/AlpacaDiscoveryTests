@@ -83,6 +83,9 @@ namespace AlpacaDiscovery
             NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
             foreach (NetworkInterface adapter in adapters)
             {
+                //Do not try and use non-operational adapters
+                if (adapter.OperationalStatus != OperationalStatus.Up)
+                    continue;
                 // Currently this only works for IPv4, skip any adapters that do not support it.
                 if (!adapter.Supports(NetworkInterfaceComponent.IPv4))
                     continue;
