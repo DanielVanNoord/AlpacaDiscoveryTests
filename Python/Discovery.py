@@ -1,9 +1,9 @@
 import socket
+# requires netifaces, you can install it with pip install netifaces
+# this is used to iterate over all interfaces on the computer and to use the correct broadcast address
 import netifaces
 
-port = 32227
-
-server_address = ('255.255.255.255', port) #broadcast to discovery port
+port = 32227 # a temporary port that I choose for testing
 
 # Create listening port
 # ---------------------
