@@ -70,6 +70,9 @@ A Client broadcasts a UDP packet containing the discovery message on the discove
 
 Clients may receive responses from multiple servers. They should be able to gracefully convey this information to the end user.
 
+
+![](Alpaca_Discovery_Flow.png)
+
 ### Definitions
 
 For the following document Server will refer to something (a driver or device) that exposes the Alpaca interface and Client will refer to client applications that want to locate and use the Server's API(s). 
