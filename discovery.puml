@@ -1,0 +1,13 @@
+@startuml
+!pragma teoz true
+title Alpaca Discovery Protocol example for LAN 192.168.0.0/24
+participant "Client\n192.168.0.10" as Client
+participant "Server 1\n192.168.0.100\nAlpaca Port 1111" as Server1
+participant "Server 2\n192.168.0.200\nAlpaca Port 2222" as Server2
+
+Client -> Server1 : Discovery Broadcast\nFrom: 192.168.0.10:12345 (random port)\nTo: 192.168.0.255:32227 (subnet broadcast address)\nUDP datagram: "alpaca discovery"
+& Server1 -> Server2 : Received by all hosts
+
+Server1 -> Client : Discovery Response\nFrom: 192.168.0.100:24824 (random port)\nTo: 192.168.0.10:12345 (directed packet)\nUDP datagram: "alpaca here:1111"
+Server2 -> Client : Discovery Response\nFrom: 192.168.0.200:73624 (random port)\nTo: 192.168.0.10:12345 (directed packet)\nUDP datagram: "alpaca here:2222"
+@enduml
