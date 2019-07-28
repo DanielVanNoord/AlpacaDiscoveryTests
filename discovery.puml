@@ -9,5 +9,5 @@ Client -> Server1 : Discovery Broadcast\nFrom: 192.168.0.10:12345 (random port)\
 & Server1 -> Server2 : Received by all hosts
 
 Server1 -> Client : Discovery Response\nFrom: 192.168.0.100:24824 (random port)\nTo: 192.168.0.10:12345 (directed packet)\nUDP datagram: "alpaca here:1111"
-Server2 -> Client : Discovery Response\nFrom: 192.168.0.200:73624 (random port)\nTo: 192.168.0.10:12345 (directed packet)\nUDP datagram: "alpaca here:2222"
+Server2 -> Client : Discovery Response\nFrom: 192.168.0.200:43624 (random port)\nTo: 192.168.0.10:12345 (directed packet)\nUDP datagram: "alpaca here:2222"
 @enduml
