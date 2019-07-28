@@ -42,8 +42,7 @@ This is an example .Net Server and Client. This includes a .Net Standard 2.0 and
 
 This Client example iterates over all network adapters on the system and sends the request to each broadcast address that it finds. This works much better then sending a single generic broadcast. 
 
-These can be built with Visual Studio 2017 Community or via the dotnet commandline tools. To publish a dotnet core example for a different platform use the dotnet publish command (https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish?tabs=netcore21). For example running the following command in the core Client or Server folder will create a Self Contained Deployment in a folder named linux for Linux x64: `dotnet publish --self-contained --
-runtime linux-x64 -o linux`. See https://docs.microsoft.com/en-us/dotnet/core/rid-catalog for target platforms.
+These can be built with Visual Studio 2017 Community or via the dotnet commandline tools. To publish a dotnet core example for a different platform use the dotnet publish command (https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish?tabs=netcore21). For example running the following command in the core Client or Server folder will create a Self Contained Deployment in a folder named linux for Linux x64: `dotnet publish --self-contained --runtime linux-x64 -o linux`. See https://docs.microsoft.com/en-us/dotnet/core/rid-catalog for target platforms.
 
 ## Python
 This is an example Python 3 Client and Server. This requires the netifaces package for the Client. This can be installed with `pip (or pip3) install netifaces`. This was tested on  Windows, Linux (Ubuntu, Manjaro and Raspbian) and OSX. They can be run with the normal Python command.
