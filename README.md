@@ -1,6 +1,6 @@
 # Alpaca Discovery Tests
 
-This is an experimental discovery protocol for the new ASCOM Alpaca platform. It is based on UDP and is designed to be as light weight and easy to implement as possible. It uses a known broadcast port and a known message / response. This protocol is only meant to enable clients to find Alpaca Servers. All information about the Server can then be retrieved via the management API.
+This is an experimental discovery protocol for the new ASCOM Alpaca platform. It is based on UDP and is designed to be as light weight and easy to implement as possible. It uses a known broadcast port and a known message / response. This protocol is only meant to enable clients to find Alpaca Servers. All information about the Server(s) can then be retrieved via the management API.
 
 For the following document Server will refer to something (a driver or device) that exposes the Alpaca interface and Client will refer to client applications that want to locate and use the Server's API(s).  
 
@@ -68,6 +68,8 @@ There are likely other issues not yet included.
 
 A Client broadcasts a UDP packet containing the discovery message on the discovery port. Servers listening for broadcasts on this port respond directly to the Client with the response message. Clients pull the Alpaca API port from the message and then can query the management API for details about the server.
 
+Clients may receive responses from multiple servers. They should be able to gracefully convey this information to the end user.
+
 ### Definitions
 
 For the following document Server will refer to something (a driver or device) that exposes the Alpaca interface and Client will refer to client applications that want to locate and use the Server's API(s). 
@@ -89,6 +91,8 @@ Clients MUST NOT bind their socket to the PORT. Clients SHOULD bind their socket
 Clients MAY broadcast the DISCOVERY message multiple times as this is a UDP based protocol and packets may be lost. Clients SHOULD combine the responses to remove duplicate responses. Servers SHOULD respond to each request, although they SHOULD rate limit responses to prevent UDP amplification attacks. In addition Servers SHOULD NOT be open to the Internet and SHOULD ONLY respond to trusted IP addresses.
 
 Servers MUST respond to the Client DISCOVERY request with the RESPONSE message containing the Servers Alpaca Port. This response MUST occur via unicast and be directed to the port and IP address that the client sent the DISCOVERY message from. Clients then may use the port specified in the RESPONSE message to query the Alpaca API on the Server for details about the features it provides.
+
+Clients MUST be able to handle responses from multiple Servers.
 
 # How to help?
 You can help by testing these examples on your networks to look for problems. Second you can leave comments, here or on the ASCOM forum. Also pull requests to make improvements to the examples / specification are welcome. Finally more examples are very welcome. I would like to add a Windows C example as well as Java, Node.js and more microcontrollers / microcontroller platforms. Also any other languages or frameworks are welcome.
