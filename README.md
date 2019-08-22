@@ -1,6 +1,6 @@
-# Alpaca Discovery Tests
+# Alpaca LAN Discovery Tests
 
-This is an experimental discovery protocol for the new ASCOM Alpaca platform. It is based on UDP and is designed to be as light weight and easy to implement as possible. It uses a known broadcast port and a known message / response. This protocol is only meant to enable clients to find Alpaca Servers. All information about the Server(s) can then be retrieved via the management API.
+This is an experimental discovery protocol for the new ASCOM Alpaca platform. It is based on UDP and is designed to be as light weight and easy to implement as possible. It uses a known broadcast port and a known message / response. This protocol is only meant to enable clients to find Alpaca Servers within a Local Area Network (LAN). All information about the Server(s) can then be retrieved via the management API.
 
 For the following document Server will refer to something (a driver or device) that exposes the Alpaca interface and Client will refer to client applications that want to locate and use the Server's API(s).  
 
@@ -14,7 +14,7 @@ In order to implement this protocol all a Client needs is the ability to send a 
 
 This repository contains examples for several platforms and languages of both the Client and Server protocol. Both the Client and the Server protocol are designed to run on microcotrollers, any OS, or any language that offers UDP features. 
 
-All of these examples have been tested on a variety of networks and operating systems and have consistently worked. If anyone finds differently please let me know. Note, before claiming that these don't work please make sure that you have a valid network route between your devices and that no firewall can interfere.
+All of these examples have been tested on a variety of networks and operating systems and have consistently worked. If anyone finds differently please let me know. Note, before claiming that these don't work please make sure that you have a valid network route between your devices and that no firewall can interfere. This is designed to work on a given LAN, if your network consists of several LANs then it will likely not be able to cross the boundaries.
 
 Note that this is a UDP protocol, packets can be lost or dropped. If you can't find a Server try sending the request again.
 
@@ -34,7 +34,7 @@ After this is flashed on a board it will print any received requests via the boa
 
 This is a simple example C Server and Client that runs on Linux. It was tested on Ubuntu 18.04, Manjaro (Arch) and Raspbian. Both require gcc and binutils to build. To build simply run "gcc -o client client.c" and "gcc -o server server.c". To start simply run the output program in a terminal. The Server will listen for any discovery packets and print what it receives to the terminal. It will then respond. The client will send out the discovery request and print any response. 
 
-Note that the C Client currently sends the discovery broadcast to the 255.255.255.255 address. This does not work as well as sending broadcasts to each network adaptor's broadcast address as some adaptors and networking gear may not forward generic packets.
+Note that the C Client currently sends the discovery broadcast to the 255.255.255.255 address. This does not work as well as sending broadcasts to each network adapter's broadcast address as some adapters and networking gear may not forward generic packets.
 
 ## Net 
 
@@ -59,7 +59,11 @@ This is a (rough!) draft specification. The final protocol and strings may be di
 
 There are several working samples included in this repository. These should help to reduce any ambiguity with this standard. All there servers were tested at the same time to ensure that the broadcast port could be shared.
 
-There are several open questions about this specification. First we need to choose a final port number. Second we need to choose the final discovery and response messages. Additionally we need to decide if the messages should be versioned.
+There are several open questions about this specification. First we need to choose a final port number. Second we need to choose the final discovery and response messages. 
+
+Messages will be should be versioned going forward but this has not yet been added to the test code. The open question is should the request be versioned, the response be versioned, or both.
+
+How to handle servers being behind proxies or port forwarders is also an issue that needs to be resolved. Currently the proposal requires servers to allow end users to change the reported port. As they have to setup the proxy anyway this allows users with custom setups to handle this situation. This needs to be added to the samples (along with subnet based response handling).
 
 There are likely other issues not yet included.
 
@@ -76,15 +80,17 @@ Clients may receive responses from multiple servers. They should be able to grac
 
 For the following document Server will refer to something (a driver or device) that exposes the Alpaca interface and Client will refer to client applications that want to locate and use the Server's API(s). 
 
-PORT (Alpaca Discovery Port): this is the port that the Client Broadcasts the discovery message on and the Server listens on. The Client should not listen on this port. Rather it should listen on a system assigned port. Likewise the Server should not respond using port. It should respond on a system assigned port. For the test I have chosen port 32227. This falls outside of the IANA Ephemeral Port range and was not use by any registered protocols that I could find. The final port may change and may be registered by us with IANA.
+PORT (Alpaca Discovery Port): this is the port that the Client Broadcasts the discovery message on and the Server listens on. The Client should not listen on this port. Rather it should listen on a system assigned port. Likewise the Server should not respond using the port. It should respond on a system assigned port. For the test I have chosen port 32227. This falls outside of the IANA Ephemeral Port range and was not used by any registered protocols that I could find. The final port may change and may be registered by us with IANA.
+
+ALPACAPORT: this is the port that the Alpaca REST API is available on. This must be able to be changed by the end user incase the SERVER is behind a proxy of some sort. This means that the SERVER may respond with a different port number depending on the IP Address and Route of the discovery request. 
 
 DISCOVERY: this is the message that is sent by the client via broadcast on the PORT. Currently this message is simply *alpaca discovery*. For example in C the message could be defined as `char* DISCOVERY = "alpaca discovery";`
 
-RESPONSE: this is the message that the server sends back via unicast to the client. This message include the port that the Alpaca API is available on the server. The current message is *alpaca here:port* where port is the port number of the Alpaca API. For example in c this could be set to a char* with `sprintf(response, "alpaca here:%d", AlpacaPortNumber);`
+RESPONSE: this is the message that the server sends back via unicast to the client. This message include the port that the Alpaca API is available on the server. The current message is *alpaca here:port* where port is the port number of the Alpaca API. For example in c this could be set to a char* with `sprintf(response, "alpaca here:%d", ALPACAPORT);`
 
 ### Specification (work in progress)
 
-Servers and Clients MUST come configured to use the PORT for broadcasts by default. Servers and Clients MUST provide a mechanism for the end user to change the used PORT if this is required on their network.
+Servers and Clients MUST come configured to use the PORT for broadcasts by default. Servers and Clients MUST provide a mechanism for the end user to change the used PORT if this is required on their network. Servers MUST allow the ALPACAPORT to be changed by the end user to handle the Server being behind a proxy.
 
 Servers must be configured so that they can share the PORT with other Servers in a shared context. This means that Servers MUST open the socket with the language equivalent of SO_REUSEADDR on Windows and the language equivalents of SO_REUSEADDR and SO_REUSEPORT on Linux / OSX. Servers in a shared context MUST NOT require or use root access so that other Servers can also use the port.
 
