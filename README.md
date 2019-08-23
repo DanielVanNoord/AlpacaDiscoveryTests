@@ -12,7 +12,7 @@ In order to implement this protocol all a Client needs is the ability to send a 
 
 # Examples
 
-This repository contains examples for several platforms and languages of both the Client and Server protocol. Both the Client and the Server protocol are designed to run on microcotrollers, any OS, or any language that offers UDP features. 
+This repository contains examples for several platforms and languages of both the Client and Server protocol. Both the Client and the Server protocol are designed to run on microcontrollers, any OS, or any language that offers UDP features. 
 
 All of these examples have been tested on a variety of networks and operating systems and have consistently worked. If anyone finds differently please let me know. Note, before claiming that these don't work please make sure that you have a valid network route between your devices and that no firewall can interfere. This is designed to work on a given LAN, if your network consists of several LANs then it will likely not be able to cross the boundaries.
 
@@ -40,16 +40,16 @@ Note that the C Client currently sends the discovery broadcast to the 255.255.25
 
 This is an example .Net Server and Client. This includes a .Net Standard 2.0 and .Net Framework 3.5 library that implements the protocols as well as several runtimes. The Net 3.5 was tested on Windows 7 and 10 and the Net Standard was tested via Net Core 2.0 on Windows, Linux (Ubuntu, Manjaro and Raspbian) and OSX. It was also tested on Android and IOS (example apps coming soon) via Xamarin. 
 
-This Client example iterates over all network adapters on the system and sends the request to each broadcast address that it finds. This works much better then sending a single generic broadcast. 
+This Client example iterates over all network adapters on the system and sends the request to each broadcast address that it finds. This works much better than sending a single generic broadcast. 
 
-These can be built with Visual Studio 2017 Community or via the dotnet commandline tools. To publish a dotnet core example for a different platform use the dotnet publish command (https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish?tabs=netcore21). For example running the following command in the core Client or Server folder will create a Self Contained Deployment in a folder named linux for Linux x64: `dotnet publish --self-contained --runtime linux-x64 -o linux`. See https://docs.microsoft.com/en-us/dotnet/core/rid-catalog for target platforms.
+These can be built with Visual Studio 2017 (or 2019) Community or via the dotnet command line tools. To publish a dotnet core example for a different platform use the dotnet publish command (https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish?tabs=netcore21). For example running the following command in the core Client or Server folder will create a Self Contained Deployment in a folder named linux for Linux x64: `dotnet publish --self-contained --runtime linux-x64 -o linux`. See https://docs.microsoft.com/en-us/dotnet/core/rid-catalog for target platforms.
 
 ## Python
 This is an example Python 3 Client and Server. This requires the netifaces package for the Client. This can be installed with `pip (or pip3) install netifaces`. This was tested on  Windows, Linux (Ubuntu, Manjaro and Raspbian) and OSX. They can be run with the normal Python command.
 
 There is one line in the server that must be removed on Windows and included for Linux or OSX. This handles a difference in the socket API across the different platforms. See the file for details.
 
-This Client iterates over all network adapters on the system and sends the request to each broadcast address that it finds. This works much better then sending a single generic broadcast. 
+This Client iterates over all network adapters on the system and sends the request to each broadcast address that it finds. This works much better than sending a single generic broadcast. 
 
 # Specification
 
@@ -91,7 +91,7 @@ Servers and Clients MUST come configured to use the PORT for broadcasts by defau
 
 Servers must be configured so that they can share the PORT with other Servers in a shared context. This means that Servers MUST open the socket with the language equivalent of SO_REUSEADDR on Windows and the language equivalents of SO_REUSEADDR and SO_REUSEPORT on Linux / OSX. Servers in a shared context MUST NOT require or use root access so that other Servers can also use the port.
 
-Clients MUST NOT bind their socket to the PORT. Clients SHOULD bind their socket to a system assigned port. Clients SHOULD broadcast the DISCOVERY message to the unique broadcast address of each network interface rather then to the generic broadcast address. This maximizes compatibility with various networking gear and helps to ensure that the packets are routed correctly. 
+Clients MUST NOT bind their socket to the PORT. Clients SHOULD bind their socket to a system assigned port. Clients SHOULD broadcast the DISCOVERY message to the unique broadcast address of each network interface rather than to the generic broadcast address. This maximizes compatibility with various networking gear and helps to ensure that the packets are routed correctly. 
 
 Clients MAY broadcast the DISCOVERY message multiple times as this is a UDP based protocol and packets may be lost. Clients SHOULD combine the responses to remove duplicate responses. Servers SHOULD respond to each request, although they SHOULD rate limit responses to prevent UDP amplification attacks. In addition Servers SHOULD NOT be open to the Internet and SHOULD ONLY respond to trusted IP addresses.
 
