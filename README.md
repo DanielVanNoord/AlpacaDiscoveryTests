@@ -1,6 +1,6 @@
 # Alpaca LAN Discovery Tests
 
-This is an experimental discovery protocol for the new ASCOM Alpaca platform. It is based on UDP and is designed to be as light weight and easy to implement as possible. It uses a known broadcast port and a known message / response. This protocol is only meant to enable clients to find Alpaca Servers within a Local Area Network (LAN). All information about the Server(s) can then be retrieved via the management API.
+This is a Request for Comments on a discovery protocol for the new ASCOM Alpaca platform. It is based on UDP and is designed to be as light weight and easy to implement as possible. It uses a known broadcast port and a known message / response. This protocol is only meant to enable clients to find Alpaca Servers within a Local Area Network (LAN). All information about the Server(s) can then be retrieved via the management API.
 
 For the following document Server will refer to something (a driver or device) that exposes the Alpaca interface and Client will refer to client applications that want to locate and use the Server's API(s).  
 
@@ -53,17 +53,14 @@ This Client iterates over all network adapters on the system and sends the reque
 
 # Specification
 
-### Notes
+### Current Status
 
-This is a (rough!) draft specification. The final protocol and strings may be different. Or we may go with a different approach entirely.
+There are several working samples included in this repository. These should help to reduce any ambiguity with this RFC. All of the servers were tested at the same time to ensure that the broadcast port can be shared. The following issues need testing and possible refinement:
 
-There are several working samples included in this repository. These should help to reduce any ambiguity with this standard. All there servers were tested at the same time to ensure that the broadcast port could be shared.
-
-There are several open questions about this specification. First we need to choose a final port number. Second we need to choose the final discovery and response messages. 
-
-Messages will be should be versioned going forward but this has not yet been added to the test code. The open question is should the request be versioned, the response be versioned, or both.
-
-How to handle servers being behind proxies or port forwarders is also an issue that needs to be resolved. Currently the proposal requires servers to allow end users to change the reported port. As they have to setup the proxy anyway this allows users with custom setups to handle this situation. This needs to be added to the samples (along with subnet based response handling).
+ * Specific port number(s) to be assigned
+ * Review of message contents (discovery and response). What might be missing or too verbose?
+ * Message versioning - Is this needed? It is not part of the current implementation.
+ * Servers behind port forwarders/proxies. Currently the proposal requires servers to allow end users to change the reported port. As they have to setup the proxy anyway this allows users with custom or multi-segment setups to handle this situation. The design is aimed at a single segment LAN environment for simplicity and ease of implementation.
 
 There are likely other issues not yet included.
 
