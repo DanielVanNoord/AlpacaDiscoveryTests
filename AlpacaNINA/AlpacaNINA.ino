@@ -109,9 +109,9 @@ void CheckForDiscovery() {
       return;
     }
 
-    char response[24] = {0};
+    char response[36] = {0};
 
-    sprintf(response, "alpaca here:%d", alpacaPort);
+    sprintf(response, "{\"alpacaport\": \"%d\"}", alpacaPort);
 
     // send a reply, to the IP address and port that sent us the packet we received
     Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
