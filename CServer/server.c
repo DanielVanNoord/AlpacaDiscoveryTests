@@ -52,11 +52,11 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		char response[24] = { 0 };
+		char response[36] = { 0 };
 
-		sprintf(response, "alpaca here:%d", AlpacaPort);
+		sprintf(response, "{\"alpacaport\": \"%d\"}", AlpacaPort);
 
-		n = sendto(sock, response, 17,
+		n = sendto(sock, response, strlen(response),
 			0, (struct sockaddr *)&from, fromlen);
 		if (n < 0) perror("sendto");
 	}
