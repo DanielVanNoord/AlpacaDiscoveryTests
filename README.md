@@ -58,8 +58,6 @@ This Client iterates over all network adapters on the system and sends the reque
 There are several working samples included in this repository. These should help to reduce any ambiguity with this RFC. All of the servers were tested at the same time to ensure that the broadcast port can be shared. The following issues need testing and possible refinement:
 
  * Specific port number(s) to be assigned
- * Review of message contents (discovery and response). What might be missing or too verbose?
- * Message versioning - Is this needed? It is not part of the current implementation.
  * Servers behind port forwarders/proxies. Currently the proposal requires servers to allow end users to change the reported port. As they have to setup the proxy anyway this allows users with custom or multi-segment setups to handle this situation. The design is aimed at a single segment LAN environment for simplicity and ease of implementation.
 
 There are likely other issues not yet included.
@@ -83,7 +81,7 @@ ALPACAPORT: this is the port that the Alpaca REST API is available on. This must
 
 DISCOVERY: this is the message that is sent by the client via broadcast on the PORT. Currently this message is simply *alpaca discovery*. For example in C the message could be defined as `char* DISCOVERY = "alpaca discovery";`
 
-RESPONSE: this is the message that the server sends back via unicast to the client. This message include the port that the Alpaca API is available on the server. The current message is *alpaca here:port* where port is the port number of the Alpaca API. For example in c this could be set to a char* with `sprintf(response, "alpaca here:%d", ALPACAPORT);`
+RESPONSE: this is the message that the server sends back via unicast to the client. This message include the port that the Alpaca API is available on the server. This is a valid json message of the form *{"alpacaport": "port"}* where port is the port number of the Alpaca API. For example in c this could be set to a char* with `sprintf(response, "{\"alpacaport\": \"%d\"}", ALPACAPORT);` Because this is a json message we can add additional named terms as needed. Clients must be able to ignore any additional json variables that they do not know how to handle.
 
 ### Specification (work in progress)
 
@@ -95,7 +93,7 @@ Clients MUST NOT bind their socket to the PORT. Clients SHOULD bind their socket
 
 Clients MAY broadcast the DISCOVERY message multiple times as this is a UDP based protocol and packets may be lost. Clients SHOULD combine the responses to remove duplicate responses. Servers SHOULD respond to each request, although they SHOULD rate limit responses to prevent UDP amplification attacks. In addition Servers SHOULD NOT be open to the Internet and SHOULD ONLY respond to trusted IP addresses.
 
-Servers MUST respond to the Client DISCOVERY request with the RESPONSE message containing the Servers Alpaca Port. This response MUST occur via unicast and be directed to the port and IP address that the client sent the DISCOVERY message from. Clients then may use the port specified in the RESPONSE message to query the Alpaca API on the Server for details about the features it provides.
+Servers MUST respond to the Client DISCOVERY request with the RESPONSE message containing the Servers Alpaca Port. This response MUST occur via unicast and be directed to the port and IP address that the client sent the DISCOVERY message from. Clients then may use the port specified in the RESPONSE message to query the Alpaca API on the Server for details about the features it provides. Clients MUST be able to read the ALPACAPORT from a valid json message, even if there are additional variables in the message.
 
 Clients MUST be able to handle responses from multiple Servers.
 
