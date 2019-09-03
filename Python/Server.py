@@ -10,7 +10,7 @@ server_address = ('0.0.0.0', port) #listen for any IP
 # ---------------------
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  #share address
-sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)  #needed on Linux and OSX to share port with net core. Remove on windows.
+# sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)  #needed on Linux and OSX to share port with net core. Remove on windows.
 
 try:
     sock.bind(server_address)
@@ -20,7 +20,7 @@ except:
     raise
 
 AlpacaDiscovery = "alpaca discovery"
-AlpacaResponse = "alpaca here:4567"
+AlpacaResponse = "{\"alpacaport\": \"4227\"}"
 
 while True:
     data, addr = sock.recvfrom(1024)

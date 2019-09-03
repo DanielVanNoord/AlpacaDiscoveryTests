@@ -1,3 +1,4 @@
+import json
 import socket
 # requires netifaces, you can install it with pip install netifaces
 # this is used to iterate over all interfaces on the computer and to use the correct broadcast address
@@ -18,7 +19,7 @@ except:
     raise
 
 AlpacaDiscovery = "alpaca discovery"
-AlpacaResponse = "alpaca here"
+AlpacaResponse = "alpacaport"
 
 for interface in netifaces.interfaces():
         for interfacedata in netifaces.ifaddresses(interface): 
@@ -30,5 +31,6 @@ for interface in netifaces.interfaces():
 while True:
     data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
     
-    if AlpacaResponse in str(data, "ascii"):    
-        print(addr[0], ":",  str.split(data.decode("ascii"),':')[1])
+    if AlpacaResponse in str(data, "ascii"):  
+        jsondata = json.loads(str(data, "ascii"))  
+        print(addr[0], ":",  jsondata[AlpacaResponse])
