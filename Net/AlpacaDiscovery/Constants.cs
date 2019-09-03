@@ -8,6 +8,6 @@ namespace AlpacaDiscovery
     {
         public const string DiscoveryMessage = "alpaca discovery";
         public const int DiscoveryPort = 32227;
-        public const string ResponseString = "alpaca here";
+        public const string ResponseString = "alpacaport";
     }
 }

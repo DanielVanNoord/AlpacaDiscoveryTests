@@ -1,6 +1,7 @@
 ﻿// (c) 2019 Daniel Van Noord
 // This code is licensed under MIT license (see License.txt for details)
 
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -131,22 +132,24 @@ namespace AlpacaDiscovery
 
         private void ReceiveCallback(IAsyncResult ar)
         {
-            UdpClient udpClient = (UdpClient)ar.AsyncState;
-
-            IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, Constants.DiscoveryPort);
-
-            // Obtain the UDP message body and convert it to a string, with remote IP address attached as well
-            string ReceiveString = Encoding.ASCII.GetString(udpClient.EndReceive(ar, ref endpoint));
-
-            // Configure the UdpClient class to accept more messages, if they arrive
-            udpClient.BeginReceive(ReceiveCallback, udpClient);
-
-            //Do not report your own transmissions
-            if (ReceiveString.Contains(Constants.ResponseString))
+            try
             {
-                if (int.TryParse(ReceiveString.Split(':')[1], out int result))
+                UdpClient udpClient = (UdpClient)ar.AsyncState;
+
+                IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, Constants.DiscoveryPort);
+
+                // Obtain the UDP message body and convert it to a string, with remote IP address attached as well
+                string ReceiveString = Encoding.ASCII.GetString(udpClient.EndReceive(ar, ref endpoint));
+
+                // Configure the UdpClient class to accept more messages, if they arrive
+                udpClient.BeginReceive(ReceiveCallback, udpClient);
+
+                //Do not report your own transmissions
+                if (ReceiveString.Contains(Constants.ResponseString))
                 {
-                    var ep = new IPEndPoint(endpoint.Address, result);
+                    JObject obj = JObject.Parse(ReceiveString);
+
+                    var ep = new IPEndPoint(endpoint.Address, (int)obj[Constants.ResponseString]);
                     if (!CachedEndpoints.Contains(ep))
                     {
                         CachedEndpoints.Add(ep);
@@ -154,6 +157,10 @@ namespace AlpacaDiscovery
 
                     callbackFunction?.Invoke(ep);
                 }
+            }
+            catch
+            {
+                //Logging goes here
             }
         }
 

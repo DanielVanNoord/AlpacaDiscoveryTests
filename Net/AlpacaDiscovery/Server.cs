@@ -44,7 +44,7 @@ namespace AlpacaDiscovery
                 //For testing only
                 Console.WriteLine(string.Format("Received a discovery packet from {0} at {1}", endpoint.Address, DateTime.Now));
 
-                byte[] response = Encoding.ASCII.GetBytes(string.Format(Constants.ResponseString + ":{0}", port));
+                byte[] response = Encoding.ASCII.GetBytes(string.Format("{{\"alpacaport\": \"{0}\"}}", port));
 
                 udpClient.Send(response, response.Length, endpoint);
             }
