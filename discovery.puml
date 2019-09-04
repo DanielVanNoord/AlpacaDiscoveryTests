@@ -8,6 +8,6 @@ participant "Server 2\n192.168.0.200\nAlpaca Port 2222" as Server2
 Client -> Server1 : Discovery Broadcast\nFrom: 192.168.0.10:12345 (random port)\nTo: 192.168.0.255:32227 (subnet broadcast address)\nUDP datagram: "alpaca discovery"
 & Server1 -> Server2 : Received by all hosts
 
-Server1 -> Client : Discovery Response\nFrom: 192.168.0.100:24824 (random port)\nTo: 192.168.0.10:12345 (directed packet)\nUDP datagram: "{"alpacaport": "1111"}"
-Server2 -> Client : Discovery Response\nFrom: 192.168.0.200:43624 (random port)\nTo: 192.168.0.10:12345 (directed packet)\nUDP datagram: "{"alpacaport": "2222"}"
+Server1 -> Client : Discovery Response\nFrom: 192.168.0.100:24824 (random port)\nTo: 192.168.0.10:12345 (directed packet)\nUDP datagram: "{"alpacaport": 1111}"
+Server2 -> Client : Discovery Response\nFrom: 192.168.0.200:43624 (random port)\nTo: 192.168.0.10:12345 (directed packet)\nUDP datagram: "{"alpacaport": 2222}"
 @enduml
