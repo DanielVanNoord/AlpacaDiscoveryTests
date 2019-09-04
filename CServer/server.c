@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 
 		char response[36] = { 0 };
 
-		sprintf(response, "{\"alpacaport\": \"%d\"}", AlpacaPort);
+		sprintf(response, "{\"alpacaport\": %d}", AlpacaPort);
 
 		n = sendto(sock, response, strlen(response),
 			0, (struct sockaddr *)&from, fromlen);

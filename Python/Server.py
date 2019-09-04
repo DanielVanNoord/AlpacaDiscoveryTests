@@ -20,7 +20,7 @@ except:
     raise
 
 AlpacaDiscovery = "alpaca discovery"
-AlpacaResponse = "{\"alpacaport\": \"4227\"}"
+AlpacaResponse = "{\"alpacaport\": 4227}"
 
 while True:
     data, addr = sock.recvfrom(1024)
