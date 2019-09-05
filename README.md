@@ -97,6 +97,8 @@ Servers MUST respond to the Client DISCOVERY request with the RESPONSE message c
 
 Clients MUST be able to handle responses from multiple Servers.
 
+Client SHOULD offer a mechanism to report or log incorrect responses. Clients SHOULD NOT try to connect to devices that respond incorrectly.
+
 # How to help?
 You can help by testing these examples on your networks to look for problems. Second you can leave comments, here or on the ASCOM forum. Also pull requests to make improvements to the examples / specification are welcome. Finally more examples are very welcome. I would like to add a Windows C example as well as Java, Node.js and more microcontrollers / microcontroller platforms. Also any other languages or frameworks are welcome.
 
