@@ -4,7 +4,7 @@
 import socket
 port = 32227
 
-server_address = ('0.0.0.0', port) #listen for any IP
+device_address = ('0.0.0.0', port) #listen for any IP
 
 # Create listening port
 # ---------------------
@@ -13,7 +13,7 @@ sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  #share address
 # sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)  #needed on Linux and OSX to share port with net core. Remove on windows.
 
 try:
-    sock.bind(server_address)
+    sock.bind(device_address)
 except:
     print('failure to bind')
     sock.close()
