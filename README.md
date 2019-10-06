@@ -77,7 +77,7 @@ For the following document Device will refer to something (a driver or device) t
 
 PORT (Alpaca Discovery Port): this is the port that the Client Broadcasts the discovery message on and the Device listens on. The Client should not listen on this port. Rather it should listen on a system assigned port. Likewise the Device should not respond using the port. It should respond on a system assigned port. For the test I have chosen port 32227. This falls outside of the IANA Ephemeral Port range and was not used by any registered protocols that I could find. The final port may change and may be registered by us with IANA.
 
-ALPACAPORT: this is the port that the Alpaca REST API is available on. This must be able to be changed by the end user incase the DEVICE is behind a proxy of some sort. This means that the DEVICE may respond with a different port number depending on the IP Address and Route of the discovery request. 
+ALPACAPORT: this is the port that the Alpaca REST API is available on. This must be able to be changed by the end user incase the Device is behind a proxy of some sort. This means that the Device may respond with a different port number depending on the IP Address and Route of the discovery request. 
 
 DISCOVERY: this is the message that is sent by the client via broadcast on the PORT. Currently this message is simply *alpaca discovery*. For example in C the message could be defined as `char* DISCOVERY = "alpaca discovery";`
 
