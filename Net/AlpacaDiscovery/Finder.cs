@@ -15,7 +15,6 @@ namespace AlpacaDiscovery
     public class Finder
     {
         private readonly Action<IPEndPoint> callbackFunction;
-        private readonly UdpClient cachedClient;
 
         /// <summary>
         /// A cache of all endpoints found by the server
@@ -27,89 +26,97 @@ namespace AlpacaDiscovery
 
         /// <summary>
         /// Creates a Alpaca Finder object that sends out a search request for Alpaca devices
+        /// The results will only be in the cache
+        /// This may require firewall access
+        /// </summary>
+        public Finder() : this(null)
+        {
+        }
+
+        /// <summary>
+        /// Creates a Alpaca Finder object that sends out a search request for Alpaca devices
         /// The results will be sent to the callback and stored in the cache
         /// Calling search and concatenating the results reduces the chance that a UDP packet is lost
         /// This may require firewall access
+        /// This dual targets NetStandard 2.0 and NetFX 3.5 so no Async Await
         /// </summary>
         /// <param name="callback">A callback function to receive the endpoint result</param>
         public Finder(Action<IPEndPoint> callback)
         {
             callbackFunction = callback;
 
-            cachedClient = new UdpClient();
-
-            cachedClient.EnableBroadcast = true;
-            cachedClient.MulticastLoopback = false;
-
-            //0 tells OS to give us a free ethereal port
-            cachedClient.Client.Bind(new IPEndPoint(IPAddress.Any, 0));
-
-            cachedClient.BeginReceive(ReceiveCallback, cachedClient);
-
             // Try to send the discovery request message
-            SendDiscoveryMessage(Encoding.ASCII.GetBytes(Constants.DiscoveryMessage));
+            SendDiscoveryMessage();
         }
 
         /// <summary>
-        /// Creates a Alpaca Finder object that sends out a search request for Alpaca devices
-        /// The results will only be in the cache
-        /// This may require firewall access
+        /// Send out discovery message on each IPv4 broadcast address
         /// </summary>
-        public Finder()
+        private void SearchIPv4()
         {
-            cachedClient = new UdpClient();
-            IPEndPoint BindEP = new IPEndPoint(IPAddress.Any, 0);
+            var IPv4Client = new UdpClient();
 
-            cachedClient.EnableBroadcast = true;
-            cachedClient.MulticastLoopback = false;
+            IPv4Client.EnableBroadcast = true;
+            IPv4Client.MulticastLoopback = false;
 
-            cachedClient.Client.Bind(BindEP);
+            //0 tells OS to give us a free ethereal port
+            IPv4Client.Client.Bind(new IPEndPoint(IPAddress.Any, 0));
 
-            cachedClient.BeginReceive(ReceiveCallback, cachedClient);
+            IPv4Client.BeginReceive(ReceiveCallback, IPv4Client);
 
-            // Try to send the discovery request message
-            SendDiscoveryMessage(Encoding.ASCII.GetBytes(Constants.DiscoveryMessage));
-        }
-
-        /*
-         * On my test systems I discovered that some computer network adapters / networking gear will not forward 255.255.255.255 broadcasts. 
-         * This binds to each network adapter on the computer, determines if it will work and then
-         * Sends an IP and Subnet correct broadcast for each address combination on that adapter
-         * This may result in some addresses being duplicated. For example if there are multiple addresses assigned to the same
-         * Server this will find them all.
-         * Also ncap style loopbacks may duplicate ip address running on local host
-         */
-        private void SendDiscoveryMessage(byte[] message)
-        {
+            //Broadcast on each adapters address as per Windows / Linux behavior 
             NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
             foreach (NetworkInterface adapter in adapters)
             {
                 //Do not try and use non-operational adapters
                 if (adapter.OperationalStatus != OperationalStatus.Up)
                     continue;
-                // Currently this only works for IPv4, skip any adapters that do not support it.
-                if (!adapter.Supports(NetworkInterfaceComponent.IPv4))
-                    continue;
-                IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
-                if (adapterProperties == null)
-                    continue;
-                UnicastIPAddressInformationCollection uniCast = adapterProperties.UnicastAddresses;
-                if (uniCast.Count > 0)
+                // Currently this is only for IPv4, skip any adapters that do not support it.
+                if (adapter.Supports(NetworkInterfaceComponent.IPv4))
                 {
-                    foreach (UnicastIPAddressInformation uni in uniCast)
+                    IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
+                    if (adapterProperties == null)
+                        continue;
+                    UnicastIPAddressInformationCollection uniCast = adapterProperties.UnicastAddresses;
+                    if (uniCast.Count > 0)
                     {
-                        // Currently this only works for IPv4.
-                        if (uni.Address.AddressFamily != AddressFamily.InterNetwork) 
-                            continue;
+                        foreach (UnicastIPAddressInformation uni in uniCast)
+                        {
+                            if (uni.Address.AddressFamily != AddressFamily.InterNetwork)
+                                continue;
 
-                        // Local host addresses (127.*.*.*) may have a null mask in Net Framework. We do want to search these. The correct mask is 255.0.0.0.
-                        cachedClient.Send(message, 
-                                       message.Length, 
-                                       new IPEndPoint(GetBroadcastAddress(uni.Address, uni.IPv4Mask ?? IPAddress.Parse("255.0.0.0")), Constants.DiscoveryPort)
-                                       );
+                            // Local host addresses (127.*.*.*) may have a null mask in Net Framework. We do want to search these. The correct mask is 255.0.0.0.
+                            IPv4Client.Send(Constants.Message, Constants.Message.Length, new IPEndPoint(GetBroadcastAddress(uni.Address, uni.IPv4Mask ?? IPAddress.Parse("255.0.0.0")), Constants.DiscoveryPort));
+                        }
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Send out discovery message on the IPv6 multicast group
+        /// </summary>
+        private void SearchIPv6()
+        {
+            var IPv6Client = new UdpClient(AddressFamily.InterNetworkV6);
+
+            IPv6Client.JoinMulticastGroup(IPAddress.Parse(Constants.MulticastGroup));
+
+            //0 tells OS to give us a free ethereal port
+            IPv6Client.Client.Bind(new IPEndPoint(IPAddress.IPv6Any, 0));
+
+            IPv6Client.BeginReceive(ReceiveCallback, IPv6Client);
+
+            IPv6Client.Send(Constants.Message, Constants.Message.Length, new IPEndPoint(IPAddress.Parse(Constants.MulticastGroup), Constants.DiscoveryPort));
+        }
+
+        /// <summary>
+        /// Send out the IPv4 and IPv6 messages
+        /// </summary>
+        private void SendDiscoveryMessage()
+        {
+            SearchIPv4();
+            SearchIPv6();        
         }
 
         // This turns the unicast address and the subnet into the broadcast address for that range
@@ -130,6 +137,7 @@ namespace AlpacaDiscovery
             return new IPAddress(broadcastAddress);
         }
 
+        // This dual targets NetStandard 2.0 and NetFX 3.5 so no Async Await
         private void ReceiveCallback(IAsyncResult ar)
         {
             try
@@ -158,7 +166,7 @@ namespace AlpacaDiscovery
                     callbackFunction?.Invoke(ep);
                 }
             }
-            catch
+            catch(Exception ex)
             {
                 //Logging goes here
             }
@@ -169,7 +177,7 @@ namespace AlpacaDiscovery
         /// </summary>
         public void Search()
         {
-            SendDiscoveryMessage(Encoding.ASCII.GetBytes(Constants.DiscoveryMessage));
+            SendDiscoveryMessage();
         }
 
         /// <summary>
