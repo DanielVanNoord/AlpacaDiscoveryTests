@@ -18,7 +18,7 @@ except:
     sock.close()
     raise
 
-AlpacaDiscovery = "alpaca discovery"
+AlpacaDiscovery = "alpacadiscovery1"
 AlpacaResponse = "alpacaport"
 
 for interface in netifaces.interfaces():
