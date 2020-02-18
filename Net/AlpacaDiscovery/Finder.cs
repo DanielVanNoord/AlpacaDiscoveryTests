@@ -100,10 +100,10 @@ namespace AlpacaDiscovery
         {
             var IPv6Client = new UdpClient(AddressFamily.InterNetworkV6);
 
-            IPv6Client.JoinMulticastGroup(IPAddress.Parse(Constants.MulticastGroup));
-
             //0 tells OS to give us a free ethereal port
             IPv6Client.Client.Bind(new IPEndPoint(IPAddress.IPv6Any, 0));
+
+            IPv6Client.JoinMulticastGroup(IPAddress.Parse(Constants.MulticastGroup));
 
             IPv6Client.BeginReceive(ReceiveCallback, IPv6Client);
 

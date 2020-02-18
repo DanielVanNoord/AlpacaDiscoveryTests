@@ -45,9 +45,9 @@ namespace AlpacaDiscovery
 
             UDPClientV6.ExclusiveAddressUse = false;
 
-            UDPClientV6.JoinMulticastGroup(IPAddress.Parse(Constants.MulticastGroup));
-
             UDPClientV6.Client.Bind(new IPEndPoint(IPAddress.IPv6Any, Constants.DiscoveryPort));
+
+            UDPClientV6.JoinMulticastGroup(IPAddress.Parse(Constants.MulticastGroup));
 
             // This uses begin receive rather then async so it works on net 3.5
             UDPClientV6.BeginReceive(ReceiveCallback, UDPClientV6);
