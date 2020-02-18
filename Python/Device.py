@@ -1,10 +1,9 @@
 # (c) 2019 Daniel Van Noord
 # This code is licensed under MIT license (see License.txt for details)
-
+import os
+import ipaddress
 import socket
 import struct
-import ipaddress
-
 from threading import Thread
 
 port = 32227
@@ -17,7 +16,8 @@ def respond_ipv4():
     # ---------------------
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  #share address
-    # sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)  #needed on Linux and OSX to share port with net core. Remove on windows.
+    if os.name != "nt":
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)  #needed on Linux and OSX to share port with net core. Remove on windows.
     
     device_address = ('0.0.0.0', port) #listen for any IP
 
@@ -38,7 +38,9 @@ def respond_ipv6():
     # Create a socket
     sockv6 = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
     sockv6.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
+    if os.name != "nt":
+        sockv6.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)  #needed on Linux and OSX to share port with net core. Remove on windows.
+        
     try:
         sockv6.bind(('', port))
     except:
@@ -51,7 +53,10 @@ def respond_ipv6():
     
     # Join group
     mreq = group_bin + struct.pack('@I', 0)
-    sockv6.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_JOIN_GROUP, mreq)
+    if os.name == "nt":
+        sockv6.setsockopt(41, socket.IPV6_JOIN_GROUP, mreq) #some versions of python on Windows do not have this option
+    else:
+        sockv6.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_JOIN_GROUP, mreq) 
 
     while True:
         data, addr = sockv6.recvfrom(1024)

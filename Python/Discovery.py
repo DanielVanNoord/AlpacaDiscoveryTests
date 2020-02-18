@@ -1,4 +1,5 @@
 import json
+import os
 import socket
 import struct
 # requires netifaces, you can install it with pip install netifaces
@@ -58,7 +59,11 @@ def search_ipv6():
 
     # Join group
     mreq = group_bin + struct.pack('@I', 0)
-    sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_JOIN_GROUP, mreq)
+
+    if os.name == "nt":
+        sock.setsockopt(41, socket.IPV6_JOIN_GROUP, mreq) #some versions of python on Windows do not have this option
+    else:
+        sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_JOIN_GROUP, mreq)    
 
     sock.sendto(AlpacaDiscovery.encode(), ("ff02::1", port))
 
