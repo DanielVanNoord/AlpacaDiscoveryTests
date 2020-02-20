@@ -2,7 +2,9 @@
 // This code is licensed under MIT license (see License.txt for details)
 
 using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 
@@ -39,18 +41,51 @@ namespace AlpacaDiscovery
 
         private void InitIPv6()
         {
+            NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
+            List<UdpClient> clients = new List<UdpClient>();
+
+            foreach (var adapter in adapters)
+            {
+                if (adapter.OperationalStatus != OperationalStatus.Up)
+                    continue;
+
+                if (adapter.Supports(NetworkInterfaceComponent.IPv6) && adapter.SupportsMulticast)
+                {
+                    IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
+                    if (adapterProperties == null)
+                        continue;
+
+                    UnicastIPAddressInformationCollection uniCast = adapterProperties.UnicastAddresses;
+
+                    if (uniCast.Count > 0)
+                    {
+                        foreach (UnicastIPAddressInformation uni in uniCast)
+                        {
+                            if (uni.Address.AddressFamily != AddressFamily.InterNetworkV6)
+                                continue;
+
+                            clients.Add(NewClient(uni.Address, adapterProperties.GetIPv6Properties().Index));
+                        }
+                    }
+                }
+            }
+        }
+
+        private UdpClient NewClient(IPAddress host, int index)
+        {
             UdpClient UDPClientV6 = new UdpClient(AddressFamily.InterNetworkV6);
 
             UDPClientV6.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
             UDPClientV6.ExclusiveAddressUse = false;
 
-            UDPClientV6.Client.Bind(new IPEndPoint(IPAddress.IPv6Any, Constants.DiscoveryPort));
+            UDPClientV6.Client.Bind(new IPEndPoint(host, Constants.DiscoveryPort));
 
-            UDPClientV6.JoinMulticastGroup(IPAddress.Parse(Constants.MulticastGroup));
-
+            UDPClientV6.JoinMulticastGroup(index, IPAddress.Parse(Constants.MulticastGroup));
             // This uses begin receive rather then async so it works on net 3.5
             UDPClientV6.BeginReceive(ReceiveCallback, UDPClientV6);
+
+            return UDPClientV6;
         }
 
         private void ReceiveCallback(IAsyncResult ar)

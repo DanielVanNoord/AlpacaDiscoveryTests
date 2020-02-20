@@ -98,16 +98,49 @@ namespace AlpacaDiscovery
         /// </summary>
         private void SearchIPv6()
         {
-            var IPv6Client = new UdpClient(AddressFamily.InterNetworkV6);
+            List<UdpClient> clients = new List<UdpClient>();
 
-            //0 tells OS to give us a free ethereal port
-            IPv6Client.Client.Bind(new IPEndPoint(IPAddress.IPv6Any, 0));
+            foreach (var adapter in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (adapter.OperationalStatus != OperationalStatus.Up)
+                    continue;
 
-            IPv6Client.JoinMulticastGroup(IPAddress.Parse(Constants.MulticastGroup));
+                if (adapter.Supports(NetworkInterfaceComponent.IPv6) && adapter.SupportsMulticast)
+                {
+                    IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
+                    if (adapterProperties == null)
+                        continue;
 
-            IPv6Client.BeginReceive(ReceiveCallback, IPv6Client);
+                    UnicastIPAddressInformationCollection uniCast = adapterProperties.UnicastAddresses;
 
-            IPv6Client.Send(Constants.Message, Constants.Message.Length, new IPEndPoint(IPAddress.Parse(Constants.MulticastGroup), Constants.DiscoveryPort));
+                    if (uniCast.Count > 0)
+                    {
+                        foreach (UnicastIPAddressInformation uni in uniCast)
+                        {
+                            if (uni.Address.AddressFamily != AddressFamily.InterNetworkV6)
+                                continue;
+
+                            var client = new UdpClient(AddressFamily.InterNetworkV6);
+
+                            //0 tells OS to give us a free ethereal port
+                            client.Client.Bind(new IPEndPoint(uni.Address, 0));
+
+                            client.BeginReceive(ReceiveCallback, client);
+
+                            try
+                            {
+                                client.Send(Constants.Message, Constants.Message.Length, new IPEndPoint(IPAddress.Parse(Constants.MulticastGroup), Constants.DiscoveryPort));
+
+                                clients.Add(client);
+                            }
+                            catch(SocketException)
+                            {
+
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
