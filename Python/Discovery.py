@@ -54,17 +54,6 @@ def search_ipv6():
         sock.close()
         raise
 
-    addrinfo = socket.getaddrinfo("ff02::1", None)[0]
-    group_bin = socket.inet_pton(addrinfo[0], addrinfo[4][0])
-
-    # Join group
-    mreq = group_bin + struct.pack('@I', 0)
-
-    if os.name == "nt":
-        sock.setsockopt(41, socket.IPV6_JOIN_GROUP, mreq) #some versions of python on Windows do not have this option
-    else:
-        sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_JOIN_GROUP, mreq)    
-
     sock.sendto(AlpacaDiscovery.encode(), ("ff02::1", port))
 
     while True:
