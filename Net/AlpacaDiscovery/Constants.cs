@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,7 +6,7 @@ namespace AlpacaDiscovery
 {
     public static class Constants
     {
-        public const string DiscoveryMessage = "alpacadiscovery1";
+        public const string DiscoveryMessage = "alpacadiscovery";
         public const int DiscoveryPort = 32227;
         public const string ResponseString = "alpacaport";
         public const string MulticastGroup = "ff02::1";

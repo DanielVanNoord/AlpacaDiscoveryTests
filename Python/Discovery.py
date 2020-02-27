@@ -9,7 +9,7 @@ import netifaces
 from threading import Lock, Thread
 
 port = 32227  # a temporary port that I choose for testing
-AlpacaDiscovery = "alpacadiscovery1"
+AlpacaDiscovery = "alpacadiscovery"
 AlpacaResponse = "alpacaport"
 
 lock = Lock()

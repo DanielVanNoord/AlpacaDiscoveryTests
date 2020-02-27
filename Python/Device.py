@@ -8,7 +8,7 @@ from threading import Thread
 
 port = 32227
 
-AlpacaDiscovery = "alpacadiscovery1"
+AlpacaDiscovery = "alpacadiscovery"
 AlpacaResponse = "{\"alpacaport\": 4227}"
 
 def respond_ipv4():
