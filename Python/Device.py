@@ -48,7 +48,7 @@ def respond_ipv6():
         sockv6.close()
         raise
 
-    addrinfo = socket.getaddrinfo("ff02::1", None)[0]
+    addrinfo = socket.getaddrinfo("ff12::414c:5041:4341", None)[0]
     group_bin = socket.inet_pton(addrinfo[0], addrinfo[4][0])
     
     # Join group

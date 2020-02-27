@@ -54,7 +54,7 @@ def search_ipv6():
         sock.close()
         raise
 
-    sock.sendto(AlpacaDiscovery.encode(), ("ff02::1", port))
+    sock.sendto(AlpacaDiscovery.encode(), ("ff12::414c:5041:4341", port))
 
     while True:
         data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
