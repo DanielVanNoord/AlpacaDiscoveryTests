@@ -15,4 +15,6 @@ Net/FxDiscovery/obj/
 Net/FxServer/obj/
 Net/FxServer/bin/
 Python/.vscode/
+Python/env/
+Python/__pycache__/
 Net/CoreDiscovery/obj/
