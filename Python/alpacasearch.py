@@ -73,16 +73,19 @@ def __initipv4(loop, discoport=32227):
     except Exception as e: print(e)        
 
 def __initipv6(loop, discoport=32227, mcgroup="ff12::414c:5041:4341"):
-    resonders = []
-    try:
-        for interface in netifaces.interfaces():
-            for interfacedata in netifaces.ifaddresses(interface):
-                if netifaces.AF_INET6 == interfacedata:
-                    for ip in netifaces.ifaddresses(interface)[netifaces.AF_INET6]:
-                        ip_index = ip['addr'].split('%')
-                        
-                        if len(ip_index) > 1:
-                            try:
-                                resonders.append(__async_ipv6_search(loop, ip_index[0], int(ip_index[1]), discoport, mcgroup))
-                            except Exception as e: print(e)
-    except Exception as e: print(e)
+    if os.name != "nt":
+        __async_ipv6_search(loop, '', 0, discoport, mcgroup)
+    else:    
+        resonders = []
+        try:
+            for interface in netifaces.interfaces():
+                for interfacedata in netifaces.ifaddresses(interface):
+                    if netifaces.AF_INET6 == interfacedata:
+                        for ip in netifaces.ifaddresses(interface)[netifaces.AF_INET6]:
+                            ip_index = ip['addr'].split('%')
+                            
+                            if len(ip_index) > 1:
+                                try:
+                                    resonders.append(__async_ipv6_search(loop, ip_index[0], int(ip_index[1]), discoport, mcgroup))
+                                except Exception as e: print(e)
+        except Exception as e: print(e)
