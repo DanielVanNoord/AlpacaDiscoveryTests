@@ -100,49 +100,63 @@ namespace AlpacaDiscovery
         /// </summary>
         private void SearchIPv6()
         {
-            List<UdpClient> clients = new List<UdpClient>();
-
-            foreach (var adapter in NetworkInterface.GetAllNetworkInterfaces())
+            // Windows needs to bind a socket to each adapter explicitly
+            if (PlatformDetection.IsWindows)
             {
-                if (adapter.OperationalStatus != OperationalStatus.Up)
-                    continue;
+                List<UdpClient> clients = new List<UdpClient>();
 
-                if (adapter.Supports(NetworkInterfaceComponent.IPv6) && adapter.SupportsMulticast)
+                foreach (var adapter in NetworkInterface.GetAllNetworkInterfaces())
                 {
-                    IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
-                    if (adapterProperties == null)
+                    if (adapter.OperationalStatus != OperationalStatus.Up)
                         continue;
 
-                    UnicastIPAddressInformationCollection uniCast = adapterProperties.UnicastAddresses;
-
-                    if (uniCast.Count > 0)
+                    if (adapter.Supports(NetworkInterfaceComponent.IPv6) && adapter.SupportsMulticast)
                     {
-                        foreach (UnicastIPAddressInformation uni in uniCast)
+                        IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
+                        if (adapterProperties == null)
+                            continue;
+
+                        UnicastIPAddressInformationCollection uniCast = adapterProperties.UnicastAddresses;
+
+                        if (uniCast.Count > 0)
                         {
-                            if (uni.Address.AddressFamily != AddressFamily.InterNetworkV6)
-                                continue;
-
-                            var client = new UdpClient(AddressFamily.InterNetworkV6);
-
-                            //0 tells OS to give us a free ethereal port
-                            client.Client.Bind(new IPEndPoint(uni.Address, 0));
-
-                            client.BeginReceive(ReceiveCallback, client);
-
-                            try
+                            foreach (UnicastIPAddressInformation uni in uniCast)
                             {
-                                client.Send(Constants.Message, Constants.Message.Length, new IPEndPoint(IPAddress.Parse(Constants.MulticastGroup), Constants.DiscoveryPort));
+                                if (uni.Address.AddressFamily != AddressFamily.InterNetworkV6)
+                                    continue;
 
-                                clients.Add(client);
-                            }
-                            catch(SocketException)
-                            {
+                                try
+                                {
+                                    clients.Add(NewClient(uni.Address, 0));
+                                }
+                                catch (SocketException)
+                                {
 
+                                }
                             }
                         }
                     }
                 }
             }
+            else
+            {
+                // Linux seems to handle this correctly
+                var client = NewClient(IPAddress.IPv6Any, 0);
+            }
+        }
+
+        private UdpClient NewClient(IPAddress host, int index)
+        {
+            var client = new UdpClient(AddressFamily.InterNetworkV6);
+
+            //0 tells OS to give us a free ethereal port
+            client.Client.Bind(new IPEndPoint(host, index));
+
+            client.BeginReceive(ReceiveCallback, client);
+
+            client.Send(Constants.Message, Constants.Message.Length, new IPEndPoint(IPAddress.Parse(Constants.MulticastGroup), Constants.DiscoveryPort));
+
+            return client;
         }
 
         /// <summary>

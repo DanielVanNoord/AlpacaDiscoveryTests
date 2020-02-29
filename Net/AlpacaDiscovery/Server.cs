@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 
 //This namespace dual targets NetStandard2.0 and Net35, thus no async await
@@ -47,34 +48,43 @@ namespace AlpacaDiscovery
         /// </summary>
         private void InitIPv6()
         {
-            NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
-            List<UdpClient> clients = new List<UdpClient>();
-
-            foreach (var adapter in adapters)
+            // Windows needs to have the IP Address and index set for an IPv6 multicast socket
+            if (PlatformDetection.IsWindows)
             {
-                if (adapter.OperationalStatus != OperationalStatus.Up)
-                    continue;
+                NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
+                List<UdpClient> clients = new List<UdpClient>();
 
-                if (adapter.Supports(NetworkInterfaceComponent.IPv6) && adapter.SupportsMulticast)
+                foreach (var adapter in adapters)
                 {
-                    IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
-                    if (adapterProperties == null)
+                    if (adapter.OperationalStatus != OperationalStatus.Up)
                         continue;
 
-                    UnicastIPAddressInformationCollection uniCast = adapterProperties.UnicastAddresses;
-
-                    if (uniCast.Count > 0)
+                    if (adapter.Supports(NetworkInterfaceComponent.IPv6) && adapter.SupportsMulticast)
                     {
-                        foreach (UnicastIPAddressInformation uni in uniCast)
-                        {
-                            if (uni.Address.AddressFamily != AddressFamily.InterNetworkV6)
-                                continue;
+                        IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
+                        if (adapterProperties == null)
+                            continue;
 
-                            clients.Add(NewClient(uni.Address, adapterProperties.GetIPv6Properties().Index));
+                        UnicastIPAddressInformationCollection uniCast = adapterProperties.UnicastAddresses;
+
+                        if (uniCast.Count > 0)
+                        {
+                            foreach (UnicastIPAddressInformation uni in uniCast)
+                            {
+                                if (uni.Address.AddressFamily != AddressFamily.InterNetworkV6)
+                                    continue;
+
+                                clients.Add(NewClient(uni.Address, adapterProperties.GetIPv6Properties().Index));
+                            }
                         }
                     }
                 }
             }
+            else
+            {
+                //Linux does not
+                UdpClient client = NewClient(IPAddress.IPv6Any, 0);
+            }         
         }
 
         private UdpClient NewClient(IPAddress host, int index)
