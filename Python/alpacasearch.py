@@ -41,7 +41,7 @@ class __async_ipv4:
     def __init__(self, discoport, loop):
         self.server = pyuv.UDP(loop)
         self.server.bind(('0.0.0.0', 0))
-
+        self.server.set_broadcast(True)
         self.server.start_recv(self.__on_read)
 
         self.signal_h = pyuv.Signal(loop)
@@ -52,7 +52,9 @@ class __async_ipv4:
                 if netifaces.AF_INET == interfacedata:
                     for ip in netifaces.ifaddresses(interface)[netifaces.AF_INET]:
                         if('broadcast' in ip):
-                            self.server.try_send((ip['broadcast'], discoport), "alpacadiscovery".encode())
+                            try:
+                                self.server.try_send((ip['broadcast'], discoport), "alpacadiscovery".encode())
+                            except Exception as e: print(e)
 
     def __on_read(self, handle, ip_port, flags, data, error):
         if data is not None:
@@ -74,7 +76,7 @@ def __initipv4(loop, discoport=32227):
 
 def __initipv6(loop, discoport=32227, mcgroup="ff12::414c:5041:4341"):
     if os.name != "nt":
-        __async_ipv6_search(loop, '', 0, discoport, mcgroup)
+        __async_ipv6_search(loop, '::', 0, discoport, mcgroup)
     else:    
         resonders = []
         try:

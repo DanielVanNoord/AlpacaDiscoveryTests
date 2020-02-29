@@ -77,7 +77,7 @@ def __initipv4(loop, alpacaport, discoport=32227):
 
 def __initipv6(loop, alpacaport,  discoport=32227, mcgroup="ff12::414c:5041:4341"):
     if os.name != "nt":
-        __async_ipv6(loop, '', 0, alpacaport, discoport, mcgroup)
+        __async_ipv6(loop, '::', 0, alpacaport, discoport, mcgroup)
     else:
         resonders = []
         try:
