@@ -104,7 +104,7 @@ void CheckForDiscovery() {
       return;
     }
 
-    if (strncmp("alpaca discovery", packetBuffer, 16) != 0)
+    if (strncmp("alpacadiscovery", packetBuffer, 16) != 0)
     {
       return;
     }

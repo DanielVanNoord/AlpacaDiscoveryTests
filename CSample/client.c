@@ -14,7 +14,7 @@
 
 int main(int argc, char *argv[])
 {
-	char* mess = "alpaca discovery";
+	char* mess = "alpacadiscovery";
 
 	struct sockaddr_in servaddr, cliaddr, from;
 	int broadcastSock, n, fromlen;

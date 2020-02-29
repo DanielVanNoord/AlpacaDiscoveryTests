@@ -5,7 +5,7 @@ participant "Client\n192.168.0.10" as Client
 participant "Device 1\n192.168.0.100\nAlpaca Port 1111" as Device1
 participant "Device 2\n192.168.0.200\nAlpaca Port 2222" as Device2
 
-Client -> Device1 : Discovery Broadcast\nFrom: 192.168.0.10:12345 (random port)\nTo: 192.168.0.255:32227 (subnet broadcast address)\nUDP datagram: "alpaca discovery"
+Client -> Device1 : Discovery Broadcast\nFrom: 192.168.0.10:12345 (random port)\nTo: 192.168.0.255:32227 (subnet broadcast address)\nUDP datagram: "alpacadiscovery"
 & Device1 -> Device2 : Received by all hosts
 
 Device1 -> Client : Discovery Response\nFrom: 192.168.0.100:24824 (random port)\nTo: 192.168.0.10:12345 (directed packet)\nUDP datagram: "{"alpacaport": 1111}"

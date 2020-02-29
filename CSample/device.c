@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 			continue;
 		}
 		//I am comparing 0 for clarity
-		if (strncmp("alpaca discovery", buf, 16) != 0)
+		if (strncmp("alpacadiscovery", buf, 16) != 0)
 		{
 			continue;
 		}

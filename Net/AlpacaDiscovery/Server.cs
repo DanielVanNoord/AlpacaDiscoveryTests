@@ -2,8 +2,11 @@
 // This code is licensed under MIT license (see License.txt for details)
 
 using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 
 //This namespace dual targets NetStandard2.0 and Net35, thus no async await
@@ -16,6 +19,16 @@ namespace AlpacaDiscovery
         public Server(int AlpacaPort)
         {
             port = AlpacaPort;
+            
+            InitIPv4();
+            InitIPv6();
+        }
+
+        /// <summary>
+        /// Create and listen on an IPv4 broadcast port
+        /// </summary>
+        private void InitIPv4()
+        {
             UdpClient UDPClient = new UdpClient();
 
             UDPClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
@@ -28,6 +41,67 @@ namespace AlpacaDiscovery
 
             // This uses begin receive rather then async so it works on net 3.5
             UDPClient.BeginReceive(ReceiveCallback, UDPClient);
+        }
+
+        /// <summary>
+        /// Bind a UDP client to each network adapter and set the index and address for multicast
+        /// </summary>
+        private void InitIPv6()
+        {
+            // Windows needs to have the IP Address and index set for an IPv6 multicast socket
+            if (PlatformDetection.IsWindows)
+            {
+                NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
+                List<UdpClient> clients = new List<UdpClient>();
+
+                foreach (var adapter in adapters)
+                {
+                    if (adapter.OperationalStatus != OperationalStatus.Up)
+                        continue;
+
+                    if (adapter.Supports(NetworkInterfaceComponent.IPv6) && adapter.SupportsMulticast)
+                    {
+                        IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
+                        if (adapterProperties == null)
+                            continue;
+
+                        UnicastIPAddressInformationCollection uniCast = adapterProperties.UnicastAddresses;
+
+                        if (uniCast.Count > 0)
+                        {
+                            foreach (UnicastIPAddressInformation uni in uniCast)
+                            {
+                                if (uni.Address.AddressFamily != AddressFamily.InterNetworkV6)
+                                    continue;
+
+                                clients.Add(NewClient(uni.Address, adapterProperties.GetIPv6Properties().Index));
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //Linux does not
+                UdpClient client = NewClient(IPAddress.IPv6Any, 0);
+            }         
+        }
+
+        private UdpClient NewClient(IPAddress host, int index)
+        {
+            UdpClient UDPClientV6 = new UdpClient(AddressFamily.InterNetworkV6);
+
+            UDPClientV6.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+
+            UDPClientV6.ExclusiveAddressUse = false;
+
+            UDPClientV6.Client.Bind(new IPEndPoint(host, Constants.DiscoveryPort));
+
+            UDPClientV6.JoinMulticastGroup(index, IPAddress.Parse(Constants.MulticastGroup));
+            // This uses begin receive rather then async so it works on net 3.5
+            UDPClientV6.BeginReceive(ReceiveCallback, UDPClientV6);
+
+            return UDPClientV6;
         }
 
         private void ReceiveCallback(IAsyncResult ar)
