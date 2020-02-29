@@ -51,6 +51,8 @@ namespace AlpacaDiscovery
 
         /// <summary>
         /// Send out discovery message on each IPv4 broadcast address
+        /// This dual targets NetStandard 2.0 and NetFX 3.5 so no Async Await
+        /// Broadcasts on each adapters address as per Windows / Linux documentation 
         /// </summary>
         private void SearchIPv4()
         {
@@ -64,14 +66,13 @@ namespace AlpacaDiscovery
 
             IPv4Client.BeginReceive(ReceiveCallback, IPv4Client);
 
-            //Broadcast on each adapters address as per Windows / Linux behavior 
             NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
             foreach (NetworkInterface adapter in adapters)
             {
                 //Do not try and use non-operational adapters
                 if (adapter.OperationalStatus != OperationalStatus.Up)
                     continue;
-                // Currently this is only for IPv4, skip any adapters that do not support it.
+
                 if (adapter.Supports(NetworkInterfaceComponent.IPv4))
                 {
                     IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
@@ -95,6 +96,7 @@ namespace AlpacaDiscovery
 
         /// <summary>
         /// Send out discovery message on the IPv6 multicast group
+        /// This dual targets NetStandard 2.0 and NetFX 3.5 so no Async Await
         /// </summary>
         private void SearchIPv6()
         {
@@ -171,6 +173,7 @@ namespace AlpacaDiscovery
         }
 
         // This dual targets NetStandard 2.0 and NetFX 3.5 so no Async Await
+        // This callback is shared between IPv4 and IPv6
         private void ReceiveCallback(IAsyncResult ar)
         {
             try

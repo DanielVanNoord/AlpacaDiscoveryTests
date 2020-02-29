@@ -23,6 +23,9 @@ namespace AlpacaDiscovery
             InitIPv6();
         }
 
+        /// <summary>
+        /// Create and listen on an IPv4 broadcast port
+        /// </summary>
         private void InitIPv4()
         {
             UdpClient UDPClient = new UdpClient();
@@ -39,6 +42,9 @@ namespace AlpacaDiscovery
             UDPClient.BeginReceive(ReceiveCallback, UDPClient);
         }
 
+        /// <summary>
+        /// Bind a UDP client to each network adapter and set the index and address for multicast
+        /// </summary>
         private void InitIPv6()
         {
             NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();

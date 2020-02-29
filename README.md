@@ -8,7 +8,7 @@ In order to implement this protocol all a Client needs is the ability to send a 
 
  Once the IP Address and Alpaca port of the Device is known the Client can use the management API to query the Device and discover its supported endpoints and functions.
 
- For testing this uses port 32227 for the broadcasts.
+ For testing this uses port 32227 for the broadcasts and multicasts.
 
 # Examples
 
@@ -44,12 +44,16 @@ This Client example iterates over all network adapters on the system and sends t
 
 These can be built with Visual Studio 2017 (or 2019) Community or via the dotnet command line tools. To publish a dotnet core example for a different platform use the dotnet publish command (https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-publish?tabs=netcore21). For example running the following command in the core Client or Server folder will create a Self Contained Deployment in a folder named linux for Linux x64: `dotnet publish --self-contained --runtime linux-x64 -o linux`. See https://docs.microsoft.com/en-us/dotnet/core/rid-catalog for target platforms.
 
+This supports both IPv4 broadcast and IPv6 multicast.
+
 ## Python
-This is an example Python 3 set of programs. The client requires the netifaces package. This can be installed with `pip (or pip3) install netifaces`. This was tested on  Windows, Linux (Ubuntu, Manjaro and Raspbian) and OSX. They can be run with the normal Python command.
+This is an example Python 3 set of programs. The client requires the netifaces any pyuv packages. This can be installed with `pip (or pip3) install netifaces`. This was tested on  Windows, Linux (Ubuntu, Manjaro and Raspbian) and OSX. They can be run with the normal Python command.
 
 There is one line in the Device example that must be removed on Windows and included for Linux or OSX. This handles a difference in the socket API across the different platforms. See the file for details.
 
 This Client iterates over all network adapters on the system and sends the request to each broadcast address that it finds. This works much better than sending a single generic broadcast. 
+
+This supports both IPv4 broadcast and IPv6 multicast.
 
 # Specification
 
@@ -66,6 +70,8 @@ There are likely other issues not yet identified.
 
 A Client broadcasts a UDP packet containing the discovery message on the discovery port. Devices listening for broadcasts on this port respond directly to the Client with the response message. Clients pull the Alpaca API port from the message and then can query the management API for details about the Device.
 
+For IPv6 this is achieved using multicast.
+
 Clients may receive responses from multiple devices. They should be able to gracefully convey this information to the end user.
 
 
@@ -79,7 +85,7 @@ PORT (Alpaca Discovery Port): this is the port that the Client Broadcasts the di
 
 ALPACAPORT: this is the port that the Alpaca REST API is available on. This must be able to be changed by the end user in case the Device is behind a proxy of some sort. This means that the Device may respond with a different port number depending on the IP Address and Route of the discovery request. 
 
-DISCOVERY: this is the message that is sent by the client via broadcast on the PORT. Currently this message is simply *alpaca discovery*. For example in C the message could be defined as `char* DISCOVERY = "alpaca discovery";`
+DISCOVERY: this is the message that is sent by the client via broadcast on the PORT. Currently this message is simply *alpaca discovery*. For example in C the message could be defined as `char* DISCOVERY = "alpacadiscovery";`
 
 RESPONSE: this is the message that the Device sends back via unicast to the client. This message include the port that the Alpaca API is available on the Device. This is a valid json message of the form *{"alpacaport": port}* where port is the port number of the Alpaca API. For example in c this could be set to a char* with `sprintf(response, "{\"alpacaport\": %d}", ALPACAPORT);` Because this is a json message we can add additional named terms as needed. Clients must be able to ignore any additional json fields that they do not know how to handle.
 
