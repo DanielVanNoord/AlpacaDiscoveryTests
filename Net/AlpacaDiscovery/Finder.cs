@@ -208,9 +208,9 @@ namespace AlpacaDiscovery
                     if (!CachedEndpoints.Contains(ep))
                     {
                         CachedEndpoints.Add(ep);
-                    }
 
-                    callbackFunction?.Invoke(ep);
+                        callbackFunction?.Invoke(ep);
+                    }
                 }
             }
             catch(Exception ex)
