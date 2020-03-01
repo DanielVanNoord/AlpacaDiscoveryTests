@@ -10,6 +10,7 @@ namespace FxDiscovery
             Console.WriteLine("Searching...");
 
             AlpacaDiscovery.Finder find = new AlpacaDiscovery.Finder(AddressFound);
+            find.Search();
 
             Console.WriteLine("Press Enter to Exit");
             Console.ReadLine();

@@ -1,4 +1,4 @@
-﻿// (c) 2019 Daniel Van Noord
+// (c) 2019 Daniel Van Noord
 // This code is licensed under MIT license (see License.txt for details)
 
 using Newtonsoft.Json.Linq;
@@ -44,9 +44,6 @@ namespace AlpacaDiscovery
         public Finder(Action<IPEndPoint> callback)
         {
             callbackFunction = callback;
-
-            // Try to send the discovery request message
-            SendDiscoveryMessage();
         }
 
         /// <summary>
@@ -145,12 +142,12 @@ namespace AlpacaDiscovery
             }
         }
 
-        private UdpClient NewClient(IPAddress host, int index)
+        private UdpClient NewClient(IPAddress host, int port)
         {
             var client = new UdpClient(AddressFamily.InterNetworkV6);
 
             //0 tells OS to give us a free ethereal port
-            client.Client.Bind(new IPEndPoint(host, index));
+            client.Client.Bind(new IPEndPoint(host, port));
 
             client.BeginReceive(ReceiveCallback, client);
 
