@@ -65,9 +65,12 @@ class __async_ipv4:
         self.signal_h.close()
         self.server.close()
 
-def search(loop, discoport=32227, mcgroup="ff12::414c:5041:4341"):
-    __initipv4(loop, discoport)
-    __initipv6(loop, discoport, mcgroup)
+def search(loop, discoport=32227, mcgroup="ff12::414c:5041:4341", ipv4=True, ipv6=True):
+    if ipv4:
+        __initipv4(loop, discoport)
+
+    if ipv6:
+        __initipv6(loop, discoport, mcgroup)
 
 def __initipv4(loop, discoport=32227):
     try:

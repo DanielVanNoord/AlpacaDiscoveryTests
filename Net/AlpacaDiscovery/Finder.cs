@@ -159,10 +159,11 @@ namespace AlpacaDiscovery
         /// <summary>
         /// Send out the IPv4 and IPv6 messages
         /// </summary>
-        private void SendDiscoveryMessage()
+        private void SendDiscoveryMessage(bool searchIPv4, bool searchIPv6)
         {
-            SearchIPv4();
-            SearchIPv6();        
+            if (searchIPv4) { SearchIPv4(); }
+
+            if (searchIPv6) { SearchIPv6(); }       
         }
 
         // This turns the unicast address and the subnet into the broadcast address for that range
@@ -220,11 +221,15 @@ namespace AlpacaDiscovery
         }
 
         /// <summary>
-        /// Resends the search request
+        /// Resends the search request for IPv4 and IPv6
         /// </summary>
-        public void Search()
+        public void Search(bool IPv4 = true, bool IPv6 = true)
         {
-            SendDiscoveryMessage();
+            if(!IPv4 && !IPv6)
+            {
+                throw new ArgumentException("You must search on one or more protocol types.");
+            }
+            SendDiscoveryMessage(IPv4, IPv6);
         }
 
         /// <summary>
