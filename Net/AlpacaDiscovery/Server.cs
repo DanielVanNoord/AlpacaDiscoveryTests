@@ -16,12 +16,24 @@ namespace AlpacaDiscovery
     {
         private readonly int port;
 
-        public Server(int AlpacaPort)
+        public Server(int AlpacaPort, bool IPv4=true, bool IPv6=true)
         {
             port = AlpacaPort;
-            
-            InitIPv4();
-            InitIPv6();
+
+            if (!IPv4 && !IPv6)
+            {
+                throw new ArgumentException("You must search on one or more protocol types.");
+            }
+
+            if (IPv4)
+            {
+                InitIPv4();
+            }
+
+            if (IPv6)
+            {
+                InitIPv6();
+            }
         }
 
         /// <summary>
