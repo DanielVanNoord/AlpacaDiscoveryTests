@@ -86,6 +86,10 @@ namespace AlpacaDiscovery
                                 if (uni.Address.AddressFamily != AddressFamily.InterNetworkV6)
                                     continue;
 
+                                //Only use LinkLocal or LocalHost addresses
+                                if (!uni.Address.IsIPv6LinkLocal && uni.Address != IPAddress.Parse("::1"))
+                                    continue;
+
                                 clients.Add(NewClient(uni.Address, adapterProperties.GetIPv6Properties().Index));
                             }
                         }
