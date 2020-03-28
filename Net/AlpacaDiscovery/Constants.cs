@@ -6,10 +6,10 @@ namespace AlpacaDiscovery
 {
     public static class Constants
     {
-        public const string DiscoveryMessage = "alpacadiscovery";
+        public const string DiscoveryMessage = "alpacadiscovery1";
         public const int DiscoveryPort = 32227;
         public const string ResponseString = "alpacaport";
-        public const string MulticastGroup = "ff12::414c:5041:4341";
+        public const string MulticastGroup = "ff12::00a1:9aca";
 
         public static byte[] Message
         {

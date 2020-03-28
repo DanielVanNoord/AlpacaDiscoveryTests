@@ -6,7 +6,7 @@ import socket
 import struct
 
 class __async_ipv6:
-    def __init__(self, loop, ip_iface, iface_index, alpacaport, discoport=32227, mcgroup="ff12::414c:5041:4341"):
+    def __init__(self, loop, ip_iface, iface_index, alpacaport, discoport=32227, mcgroup="ff12::00a1:9aca"):
         self.server = pyuv.UDP(loop)
         self.__alpacaport = alpacaport
         self.__sockv6 = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
@@ -66,7 +66,7 @@ class __async_ipv4:
         self.signal_h.close()
         self.server.close()
 
-def server(loop, alpacaport, discoport=32227, mcgroup="ff12::414c:5041:4341", ipv4=True, ipv6=True):
+def server(loop, alpacaport, discoport=32227, mcgroup="ff12::00a1:9aca", ipv4=True, ipv6=True):
     if ipv4:
         __initipv4(loop, alpacaport, discoport)
     if ipv6:
@@ -77,7 +77,7 @@ def __initipv4(loop, alpacaport, discoport=32227):
         __async_ipv4(alpacaport, discoport, loop)
     except Exception as e: print(e)        
 
-def __initipv6(loop, alpacaport,  discoport=32227, mcgroup="ff12::414c:5041:4341"):
+def __initipv6(loop, alpacaport,  discoport=32227, mcgroup="ff12::00a1:9aca"):
     if os.name != "nt":
         __async_ipv6(loop, '::', 0, alpacaport, discoport, mcgroup)
     else:

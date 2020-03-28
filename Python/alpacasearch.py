@@ -18,7 +18,7 @@ def print_data(data, addr):
     __lock.release()
 
 class __async_ipv6_search:
-    def __init__(self, loop, ip_iface, iface_index, discoport=32227,  mcgroup="ff12::414c:5041:4341"):
+    def __init__(self, loop, ip_iface, iface_index, discoport=32227,  mcgroup="ff12::00a1:9aca"):
         self.server = pyuv.UDP(loop)
         self.server.bind((ip_iface, 0))
 
@@ -27,7 +27,7 @@ class __async_ipv6_search:
         self.signal_h = pyuv.Signal(loop)
         self.signal_h.start(self.__signal_cb, signal.SIGINT)
 
-        self.server.try_send((mcgroup, discoport), "alpacadiscovery".encode())
+        self.server.try_send((mcgroup, discoport), "alpacadiscovery1".encode())
 
     def __on_read(self, handle, ip_port, flags, data, error):
         if data is not None:
@@ -53,7 +53,7 @@ class __async_ipv4:
                     for ip in netifaces.ifaddresses(interface)[netifaces.AF_INET]:
                         if('broadcast' in ip):
                             try:
-                                self.server.try_send((ip['broadcast'], discoport), "alpacadiscovery".encode())
+                                self.server.try_send((ip['broadcast'], discoport), "alpacadiscovery1".encode())
                             except Exception as e: print(e)
 
     def __on_read(self, handle, ip_port, flags, data, error):
@@ -65,7 +65,7 @@ class __async_ipv4:
         self.signal_h.close()
         self.server.close()
 
-def search(loop, discoport=32227, mcgroup="ff12::414c:5041:4341", ipv4=True, ipv6=True):
+def search(loop, discoport=32227, mcgroup="ff12::00a1:9aca", ipv4=True, ipv6=True):
     if ipv4:
         __initipv4(loop, discoport)
 
@@ -77,7 +77,7 @@ def __initipv4(loop, discoport=32227):
         __async_ipv4(discoport, loop)
     except Exception as e: print(e)        
 
-def __initipv6(loop, discoport=32227, mcgroup="ff12::414c:5041:4341"):
+def __initipv6(loop, discoport=32227, mcgroup="ff12::00a1:9aca"):
     if os.name != "nt":
         __async_ipv6_search(loop, '::', 0, discoport, mcgroup)
     else:    

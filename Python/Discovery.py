@@ -9,7 +9,7 @@ import netifaces
 from threading import Lock, Thread
 
 port = 32227  # a temporary port that I choose for testing
-AlpacaDiscovery = "alpacadiscovery"
+AlpacaDiscovery = "alpacadiscovery1"
 AlpacaResponse = "alpacaport"
 
 lock = Lock()
@@ -54,7 +54,7 @@ def search_ipv6():
         sock.close()
         raise
 
-    sock.sendto(AlpacaDiscovery.encode(), ("ff12::414c:5041:4341", port))
+    sock.sendto(AlpacaDiscovery.encode(), ("ff12::00a1:9aca", port))
 
     while True:
         data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
