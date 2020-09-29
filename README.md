@@ -20,19 +20,25 @@ Note that this is a UDP protocol, packets can be lost or dropped. If you can't f
 
 ## Alpaca8266
 
-This is an example of the Device protocol that runs on several ESP8266 boards. I have tested this on the Adafruit Feather Huzzah 8266 (https://www.adafruit.com/product/2821) and on a generic NodeMCU 1.0 ESP12-E (mine was made by LoLin and was version 3.0). It uses the Arduino Libraries and IDE (https://www.arduino.cc/en/main/software). You can follow the normal method of adding support for the ESP8266 (Adafruit has a good tutorial). Make sure to set your SSID and Password in the arduino_secrets file.
+This is an example of the Device protocol (IPv4 only) that runs on several ESP8266 boards. I have tested this on the Adafruit Feather Huzzah 8266 (https://www.adafruit.com/product/2821) and on a generic NodeMCU 1.0 ESP12-E (mine was made by LoLin and was version 3.0). It uses the Arduino Libraries and IDE (https://www.arduino.cc/en/main/software). You can follow the normal method of adding support for the ESP8266 (Adafruit has a good tutorial). Make sure to set your SSID and Password in the arduino_secrets file.
+
+After this is flashed on a board it will print any received requests via the board serial port and respond to the Client with the response message. You can view the serial data through the Arduino Serial Monitor.
+
+## AlpacaESP32
+
+This is an example of the Device protocol (IPv4 only) that runs on the Espressif ESP32 chip using the arduino-esp32. Currently it has been tested on the Adafruit Feather ESP32 and the Lolin D32 Pro. It also uses the Arduino Libraries and IDE.
 
 After this is flashed on a board it will print any received requests via the board serial port and respond to the Client with the response message. You can view the serial data through the Arduino Serial Monitor.
 
 ## AlpacaNina
 
-This is an example of the Device protocol that runs on the Arduino MKR 1010, which uses the ESP32 for its WiFi support (https://store.arduino.cc/usa/mkr-wifi-1010). It also uses the Arduino Libraries and IDE.
+This is an example of the Device protocol (IPv4 only) that runs on the Arduino MKR 1010, which uses the ESP32 for its WiFi support (https://store.arduino.cc/usa/mkr-wifi-1010). It also uses the Arduino Libraries and IDE.
 
 After this is flashed on a board it will print any received requests via the board serial port and respond to the Client with the response message. You can view the serial data through the Arduino Serial Monitor.
 
 ## CSample
 
-This is a simple C Device and Client sample that runs on Linux. It was tested on Ubuntu 18.04, Manjaro (Arch) and Raspbian. Both require gcc and binutils to build. To build simply run "gcc -o client client.c" and "gcc -o device device.c". To start simply run the output program in a terminal. The Device will listen for any discovery packets and print what it receives to the terminal. It will then respond. The client will send out the discovery request and print any response. 
+This is a simple C Device and Client sample (IPv4 only) that runs on Linux. It was tested on Ubuntu 18.04, Manjaro (Arch) and Raspbian. Both require gcc and binutils to build. To build simply run "gcc -o client client.c" and "gcc -o device device.c". To start simply run the output program in a terminal. The Device will listen for any discovery packets and print what it receives to the terminal. It will then respond. The client will send out the discovery request and print any response. 
 
 Note that the C Client currently sends the discovery broadcast to the 255.255.255.255 address. This does not work as well as sending broadcasts to each network adapter's broadcast address as some adapters and networking gear may not forward generic packets.
 
@@ -61,7 +67,6 @@ This supports both IPv4 broadcast and IPv6 multicast.
 
 There are several working samples included in this repository. These should help to reduce any ambiguity with this RFC. All of the Device simulators were tested at the same time to ensure that the broadcast port can be shared. The following issues need testing and possible refinement:
 
- * Specific port number(s) to be assigned
  * Devices behind port forwarders/proxies. Currently the proposal requires Devices to allow end users to change the reported port. As they have to setup the proxy anyway this allows users with custom or multi-segment setups to handle this situation. The design is aimed at a single segment LAN environment for simplicity and ease of implementation.
 
 There are likely other issues not yet identified.
@@ -70,7 +75,7 @@ There are likely other issues not yet identified.
 
 A Client broadcasts a UDP packet containing the discovery message on the discovery port. Devices listening for broadcasts on this port respond directly to the Client with the response message. Clients pull the Alpaca API port from the message and then can query the management API for details about the Device.
 
-For IPv6 this is achieved using multicast.
+For IPv6 this is achieved using multicast instead of broadcast.
 
 Clients may receive responses from multiple devices. They should be able to gracefully convey this information to the end user.
 
