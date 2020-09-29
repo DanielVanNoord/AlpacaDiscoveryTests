@@ -26,7 +26,7 @@ After this is flashed on a board it will print any received requests via the boa
 
 ## AlpacaESP32
 
-This is an example of the Device protocol (IPv4 only) that runs on the Espressif ESP32 chip using the arduino-esp32. Currently it has been tested on the Adafruit Feather ESP32 and the Lolin D32 Pro. It also uses the Arduino Libraries and IDE.
+This is an example of the Device protocol (IPv4 only) that runs on the Espressif ESP32 chip using the arduino-esp32. Currently it has been tested on the Adafruit Feather HUZZAH32 (https://www.adafruit.com/product/3405) and the Lolin D32 Pro. It also uses the Arduino Libraries and IDE.
 
 After this is flashed on a board it will print any received requests via the board serial port and respond to the Client with the response message. You can view the serial data through the Arduino Serial Monitor.
 

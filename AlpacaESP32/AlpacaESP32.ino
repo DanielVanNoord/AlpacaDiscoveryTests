@@ -1,5 +1,5 @@
 //This is an example that uses the Espressif arduino-esp32 libraries from https://github.com/espressif/arduino-esp32/
-//It was tested on an Adafruit ESP32 feather and a Lolin D32 Pro
+//It was tested on an Adafruit HUZZAH32 ESP32 feather and a Lolin D32 Pro
 //Partially based on an Arduino UDP sample from the Espressif Repository.
 //My changes / contributions are under the MIT License. The Arduino libraries are LGPL and available from the https://github.com/espressif/arduino-esp32/.  -DVN
 
@@ -13,7 +13,6 @@
 #define _SSID "Goes Here"
 #define _PASSWORD "Goes Here"
 #endif
- * This is a more canonical way to do this in Arduino land then my old way
  * Just make sure to keep the SSID and Password out of source control
  */
 #include "arduino_secrets.h"

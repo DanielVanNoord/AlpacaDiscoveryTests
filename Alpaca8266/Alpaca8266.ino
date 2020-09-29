@@ -11,7 +11,6 @@
 #define _SSID "Goes Here"
 #define _PASSWORD "Goes Here"
 #endif
- * This is a more canonical way to do this in Arduino land then my old way
  * Just make sure to keep the SSID and Password out of source control
  */
 #include "arduino_secrets.h"
