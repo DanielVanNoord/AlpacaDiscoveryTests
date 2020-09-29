@@ -1,13 +1,4 @@
-/*
-  WiFi UDP Send and Receive String
-
-  This sketch wait an UDP packet on localPort using the WiFi module.
-  When a packet is received an Acknowledge packet is sent to the client on port remotePort
-
-  created 30 December 2012
-  by dlf (Metodo2 srl)
-
-*/
+//Partially based on an Arduino UDP sample from the Arduino website. My changes / contributions are under the MIT License. The Arduino libraries are LGPL and available from the Arduino Github.  -DVN
 
 #include <SPI.h>
 #include <WiFiNINA.h>
@@ -30,8 +21,8 @@ char ssid[] = _SSID;        // your network SSID (name)
 char pass[] = _PASSWORD;    // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;           // your network key Index number (needed only for WEP)
 
-unsigned int localPort = 32227;      //The Alpaca Discovery test port
-unsigned int alpacaPort = 4567;      //The (fake) port that the Alpaca API would be available on
+unsigned const int localPort = 32227;      //The Alpaca Discovery test port
+unsigned const int alpacaPort = 4567;      //The (fake) port that the Alpaca API would be available on
 
 char packetBuffer[255]; //buffer to hold incoming packet
 
@@ -98,7 +89,7 @@ void CheckForDiscovery() {
     Serial.print("Contents: ");
     Serial.println(packetBuffer);
 
-    // No oversized packets allowed
+    // No undersized packets allowed
     if (len < 16)
     {
       return;

@@ -1,4 +1,4 @@
-//Partially based on an Arduino UDP sample from the Arduino website. My changes / contributions are under the MIT License. The Arduino libraries are LGPL and availible from the Arduino Github.  -DVN
+//Partially based on an Arduino UDP sample from the Arduino website. My changes / contributions are under the MIT License. The Arduino libraries are LGPL and available from the Arduino Github.  -DVN
 
 //This has been tested on the Adafruit Feather Huzzah 8266 and a NodeMCU 1.0 board from LoLin
 #include <ESP8266WiFi.h>
@@ -78,7 +78,7 @@ void CheckForDiscovery() {
     Serial.print("Contents: ");
     Serial.println(packetBuffer);
 
-    // No oversized packets allowed
+    // No undersized packets allowed
     if (len < 16)
     {
       return;
