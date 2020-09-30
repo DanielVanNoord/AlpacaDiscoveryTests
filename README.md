@@ -18,19 +18,22 @@ All of these examples have been tested on a variety of networks and operating sy
 
 Note that this is a UDP protocol, packets can be lost or dropped. If you can't find a Device try sending the request again.
 
-## Alpaca8266
+## Arduino
+A set of examples that run on several different microcontrollers using the Arduino libraries and IDE. These are all WiFi based but I plan to add some wired examples. In addition I plan to add examples for additional microcontroller stacks as well as additional microcontrollers.
+
+### ESP32
+
+This is an example of the Device protocol (IPv4 only) that runs on the Espressif ESP32 chip using the arduino-esp32. Currently it has been tested on the Adafruit Feather HUZZAH32 (https://www.adafruit.com/product/3405), the Lolin D32 Pro, and the ESP32-DevKitC. It also uses the Arduino Libraries and IDE.
+
+After this is flashed on a board it will print any received requests via the board serial port and respond to the Client with the response message. You can view the serial data through the Arduino Serial Monitor.
+
+### ESP8266
 
 This is an example of the Device protocol (IPv4 only) that runs on several ESP8266 boards. I have tested this on the Adafruit Feather Huzzah 8266 (https://www.adafruit.com/product/2821) and on a generic NodeMCU 1.0 ESP12-E (mine was made by LoLin and was version 3.0). It uses the Arduino Libraries and IDE (https://www.arduino.cc/en/main/software). You can follow the normal method of adding support for the ESP8266 (Adafruit has a good tutorial). Make sure to set your SSID and Password in the arduino_secrets file.
 
 After this is flashed on a board it will print any received requests via the board serial port and respond to the Client with the response message. You can view the serial data through the Arduino Serial Monitor.
 
-## AlpacaESP32
-
-This is an example of the Device protocol (IPv4 only) that runs on the Espressif ESP32 chip using the arduino-esp32. Currently it has been tested on the Adafruit Feather HUZZAH32 (https://www.adafruit.com/product/3405) and the Lolin D32 Pro. It also uses the Arduino Libraries and IDE.
-
-After this is flashed on a board it will print any received requests via the board serial port and respond to the Client with the response message. You can view the serial data through the Arduino Serial Monitor.
-
-## AlpacaNina
+### WiFiNina
 
 This is an example of the Device protocol (IPv4 only) that runs on the Arduino MKR 1010, which uses the ESP32 for its WiFi support (https://store.arduino.cc/usa/mkr-wifi-1010). It also uses the Arduino Libraries and IDE.
 
