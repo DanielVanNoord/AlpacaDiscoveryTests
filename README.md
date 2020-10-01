@@ -33,6 +33,12 @@ This is an example of the Device protocol (IPv4 only) that runs on several ESP82
 
 After this is flashed on a board it will print any received requests via the board serial port and respond to the Client with the response message. You can view the serial data through the Arduino Serial Monitor.
 
+### EthernetWIZNet
+
+This is an example of the Device protocol (IPv4 only) that runs using the Arduino Ethernet library. I have tested this using a WZ5100 on a MEGA 2560. It uses the Arduino Libraries and IDE (https://www.arduino.cc/en/main/software).
+
+After this is flashed on a board it will print any received requests via the board serial port and respond to the Client with the response message. You can view the serial data through the Arduino Serial Monitor.
+
 ### WiFiNina
 
 This is an example of the Device protocol (IPv4 only) that runs on the Arduino MKR 1010, which uses the ESP32 for its WiFi support (https://store.arduino.cc/usa/mkr-wifi-1010). It also uses the Arduino Libraries and IDE.
