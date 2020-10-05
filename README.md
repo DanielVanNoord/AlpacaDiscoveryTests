@@ -64,7 +64,9 @@ This supports both IPv4 broadcast and IPv6 multicast.
 ## Python
 This is an example Python 3 set of programs. The client requires the netifaces any pyuv packages. This can be installed with `pip (or pip3) install netifaces`. This was tested on  Windows, Linux (Ubuntu, Manjaro and Raspbian) and OSX. They can be run with the normal Python command.
 
-There is one line in the Device example that must be removed on Windows and included for Linux or OSX. This handles a difference in the socket API across the different platforms. See the file for details.
+There are two separate Python examples using different threading models. One uses a single Thread for each of the IPv4 and IPv6 device / client examples. The other example uses pyuv which is a wrapper around libuv, a multi-platform asynchronous i/o library.   
+
+Linux and OSX require socket.SO_REUSEPORT for shared ports. This does not exist on Windows and is blocked behind an OS check. See the files for details.
 
 This Client iterates over all network adapters on the system and sends the request to each broadcast address that it finds. This works much better than sending a single generic broadcast. 
 
