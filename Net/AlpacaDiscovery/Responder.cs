@@ -12,11 +12,11 @@ using System.Text;
 //This namespace dual targets NetStandard2.0 and Net35, thus no async await
 namespace AlpacaDiscovery
 {
-    public class Server
+    public class Responder
     {
         private readonly int port;
 
-        public Server(int AlpacaPort, bool IPv4=true, bool IPv6=true)
+        public Responder(int AlpacaPort, bool IPv4=true, bool IPv6=true)
         {
             port = AlpacaPort;
 
