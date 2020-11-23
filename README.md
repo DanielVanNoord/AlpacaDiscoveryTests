@@ -51,6 +51,12 @@ This is a simple C Device and Client sample (IPv4 only) that runs on Linux. It w
 
 Note that the C Client currently sends the discovery broadcast to the 255.255.255.255 address. This does not work as well as sending broadcasts to each network adapter's broadcast address as some adapters and networking gear may not forward generic packets.
 
+## Go
+
+This is a sample go client (finder) example. It can be run with go run ./Finder.go and built with go build.
+
+This Client iterates over all network adapters on the system and sends the request to each broadcast address that it finds. This works much better than sending a single generic broadcast. 
+
 ## Net 
 
 This is an example .Net library with example Clients and Device (for .Net these will likely be drivers). This includes a .Net Standard 2.0 and .Net Framework 3.5 library that implements the protocols as well as several runtimes. The Net 3.5 was tested on Windows 7 and 10 and the Net Standard was tested via Net Core 2.0 on Windows, Linux (Ubuntu, Manjaro and Raspbian) and OSX. It was also tested on Android and IOS (example apps coming soon) via Xamarin. 
