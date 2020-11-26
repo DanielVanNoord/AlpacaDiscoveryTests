@@ -47,7 +47,7 @@ After this is flashed on a board it will print any received requests via the boa
 
 ## CSample
 
-This is a simple C Device and Client sample (IPv4 only) that runs on Linux. It was tested on Ubuntu 18.04, Manjaro (Arch) and Raspbian. Both require gcc and binutils to build. To build simply run "gcc -o client client.c" and "gcc -o device device.c". To start simply run the output program in a terminal. The Device will listen for any discovery packets and print what it receives to the terminal. It will then respond. The client will send out the discovery request and print any response. 
+This is a simple C Device and Client sample (IPv4 only) that runs on Linux. It was tested on Ubuntu 18.04, Manjaro (Arch) and Raspberry Pi OS. Both require gcc and binutils to build. To build simply run "gcc -o client client.c" and "gcc -o device device.c". To start simply run the output program in a terminal. The Device will listen for any discovery packets and print what it receives to the terminal. It will then respond. The client will send out the discovery request and print any response. 
 
 Note that the C Client currently sends the discovery broadcast to the 255.255.255.255 address. This does not work as well as sending broadcasts to each network adapter's broadcast address as some adapters and networking gear may not forward generic packets.
 
@@ -59,7 +59,7 @@ This Client iterates over all network adapters on the system and sends the reque
 
 ## Net 
 
-This is an example .Net library with example Clients and Device (for .Net these will likely be drivers). This includes a .Net Standard 2.0 and .Net Framework 3.5 library that implements the protocols as well as several runtimes. The Net 3.5 was tested on Windows 7 and 10 and the Net Standard was tested via Net Core 2.0 on Windows, Linux (Ubuntu, Manjaro and Raspbian) and OSX. It was also tested on Android and IOS (example apps coming soon) via Xamarin. 
+This is an example .Net library with example Clients and Device (for .Net these will likely be drivers). This includes a .Net Standard 2.0 and .Net Framework 3.5 library that implements the protocols as well as several runtimes. The Net 3.5 was tested on Windows 7 and 10 and the Net Standard was tested via Net Core 2.0 on Windows, Linux (Ubuntu, Manjaro and Raspberry Pi OS) and OSX. It was also tested on Android and IOS (example apps coming soon) via Xamarin. 
 
 This Client example iterates over all network adapters on the system and sends the request to each broadcast address that it finds. This works much better than sending a single generic broadcast. 
 
@@ -68,7 +68,7 @@ These can be built with Visual Studio 2017 (or 2019) Community or via the dotnet
 This supports both IPv4 broadcast and IPv6 multicast.
 
 ## Python
-This is an example Python 3 set of programs. The client requires the netifaces any pyuv packages. This can be installed with `pip (or pip3) install netifaces`. This was tested on  Windows, Linux (Ubuntu, Manjaro and Raspbian) and OSX. They can be run with the normal Python command.
+This is an example Python 3 set of programs. The client requires the netifaces any pyuv packages. This can be installed with `pip (or pip3) install netifaces`. This was tested on  Windows, Linux (Ubuntu, Manjaro and Raspberry Pi OS) and OSX. They can be run with the normal Python command.
 
 There are two separate Python examples using different threading models. One uses a single Thread for each of the IPv4 and IPv6 device / client examples. The other example uses pyuv which is a wrapper around libuv, a multi-platform asynchronous i/o library.   
 
