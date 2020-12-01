@@ -1,3 +1,6 @@
+// (c) 2020 Daniel Van Noord
+// This code is licensed under MIT license (see License.txt for details)
+
 package main
 
 import (
