@@ -1,6 +1,6 @@
 # Alpaca LAN Discovery Tests
 
-This is a Request for Comments on a discovery protocol for the new ASCOM Alpaca platform that enables clients to find Alpaca devices within a Local Area Network (LAN). It is based on UDP and is designed to be as light weight and easy to implement as possible. It uses a known broadcast port and a known message / response. All information about the devices can then be retrieved via the management API.
+This is documentation and sample test implementations for the new ASCOM Alpaca discovery protocol. This enables clients to find Alpaca devices within a Local Area Network (LAN). It is based on UDP and is designed to be as light weight and easy to implement as possible. It uses a known broadcast port and a known message / response. All information about the devices can then be retrieved via the management API.
 
 For the following document Device will refer to something (a driver or device) that exposes the Alpaca interface and Client will refer to client applications that want to locate and use the Device's API(s).  
 
