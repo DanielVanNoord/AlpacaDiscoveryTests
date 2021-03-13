@@ -10,41 +10,34 @@ bool is_discovery_message(String message) {
 }
 
 class Responder {
+  static void _handle_response(RawDatagramSocket udpSocket) {
+    udpSocket.forEach((RawSocketEvent event) {
+      if (event == RawSocketEvent.read) {
+        final dg = udpSocket.receive();
+        print('responder, ' + utf8.decode(dg.data));
+        print('responder, ' + dg.address.toString());
+        print('responder, ' + dg.port.toString());
+
+        if (is_discovery_message(utf8.decode(dg.data))) {
+          udpSocket.send(utf8.encode(response), dg.address, dg.port);
+        }
+      }
+    });
+  }
+
   static Future<RawDatagramSocket> create_ipv4_responder() {
     if (Platform.isWindows) {
       final responder = RawDatagramSocket.bind(InternetAddress.anyIPv4, 32227,
               reuseAddress: true)
           .then((RawDatagramSocket udpSocket) {
-        udpSocket.forEach((RawSocketEvent event) {
-          if (event == RawSocketEvent.read) {
-            final dg = udpSocket.receive();
-            print(utf8.decode(dg.data));
-            print(dg.address.toString());
-            print(dg.port.toString());
-
-            if (is_discovery_message(utf8.decode(dg.data))) {
-              udpSocket.send(utf8.encode(response), dg.address, dg.port);
-            }
-          }
-        });
+        _handle_response(udpSocket);
       });
       return responder;
     } else {
       final responder = RawDatagramSocket.bind(InternetAddress.anyIPv4, 32227,
               reuseAddress: true, reusePort: true)
           .then((RawDatagramSocket udpSocket) {
-        udpSocket.forEach((RawSocketEvent event) {
-          if (event == RawSocketEvent.read) {
-            final dg = udpSocket.receive();
-            print(utf8.decode(dg.data));
-            print(dg.address.toString());
-            print(dg.port.toString());
-
-            if (is_discovery_message(utf8.decode(dg.data))) {
-              udpSocket.send(utf8.encode(response), dg.address, dg.port);
-            }
-          }
-        });
+        _handle_response(udpSocket);
       });
       return responder;
     }
@@ -56,18 +49,7 @@ class Responder {
               reuseAddress: true)
           .then((RawDatagramSocket udpSocket) {
         udpSocket.joinMulticast(InternetAddress(multicast_group));
-        udpSocket.forEach((RawSocketEvent event) {
-          if (event == RawSocketEvent.read) {
-            final dg = udpSocket.receive();
-            print(utf8.decode(dg.data));
-            print(dg.address.toString());
-            print(dg.port.toString());
-
-            if (is_discovery_message(utf8.decode(dg.data))) {
-              udpSocket.send(utf8.encode(response), dg.address, dg.port);
-            }
-          }
-        });
+        _handle_response(udpSocket);
       });
       return responder;
     } else {
@@ -75,21 +57,9 @@ class Responder {
               reuseAddress: true, reusePort: true)
           .then((RawDatagramSocket udpSocket) {
         udpSocket.joinMulticast(InternetAddress(multicast_group));
-        udpSocket.forEach((RawSocketEvent event) {
-          if (event == RawSocketEvent.read) {
-            final dg = udpSocket.receive();
-            print(utf8.decode(dg.data));
-            print(dg.address.toString());
-            print(dg.port.toString());
-
-            if (is_discovery_message(utf8.decode(dg.data))) {
-              udpSocket.send(utf8.encode(response), dg.address, dg.port);
-            }
-          }
-        });
+        _handle_response(udpSocket);
       });
       return responder;
     }
   }
 }
-
