@@ -17,7 +17,8 @@ int main(int argc, char *argv[])
 	char* mess = "alpacadiscovery1";
 
 	struct sockaddr_in servaddr, cliaddr, from;
-	int broadcastSock, n, fromlen;
+	int broadcastSock, n;
+	socklen_t fromlen;
 	char buf[1024];
 
 	if ((broadcastSock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {

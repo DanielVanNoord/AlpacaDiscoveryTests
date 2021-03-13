@@ -16,7 +16,8 @@
 //https://stackoverflow.com/questions/14388706/socket-options-so-reuseaddr-and-so-reuseport-how-do-they-differ-do-they-mean-t
 int main(int argc, char *argv[])
 {
-	int sock, fromlen, n;
+	int sock, n;
+	socklen_t fromlen;
 	struct sockaddr_in servaddr, from;
 	char buf[1024];
 
