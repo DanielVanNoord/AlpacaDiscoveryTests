@@ -18,3 +18,7 @@ Python/.vscode/
 Python/env/
 Python/__pycache__/
 Net/CoreDiscovery/obj/
+Dart/alpaca_discovery/.dart_tool/
+Dart/alpaca_discovery/.packages
+Dart/alpaca_discovery/build/
+Dart/alpaca_discovery/doc/api/
