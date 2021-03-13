@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 final String discoveryMessage = 'alpacadiscovery1';
 final String response = '{"alpacaport": 9823}';
@@ -61,5 +62,76 @@ class Responder {
       });
       return responder;
     }
+  }
+}
+
+class DeviceEndPoint {
+  InternetAddress endpoint_address;
+  int endpoint_port;
+
+  InternetAddress get address {
+    return endpoint_address;
+  }
+
+  set address(InternetAddress value) {
+    endpoint_address = value;
+  }
+
+  int get port {
+    return endpoint_port;
+  }
+
+  set port(int value) {
+    endpoint_port = value;
+  }
+
+  DeviceEndPoint(InternetAddress address, int port) {
+    endpoint_address = address;
+    endpoint_port = port;
+  }
+}
+
+class Finder {
+  List<DeviceEndPoint> Found_Devices = [];
+
+  void search_ipv4() {
+    RawDatagramSocket.bind(InternetAddress.anyIPv4, 0)
+        .then((RawDatagramSocket udpSocket) {
+      udpSocket.broadcastEnabled = true;
+
+      udpSocket.forEach((RawSocketEvent event) {
+        if (event == RawSocketEvent.read) {
+          final dg = udpSocket.receive();
+          final data = utf8.decode(dg.data);
+          print('Finder, ' + data);
+          print('Finder, ' + dg.address.toString());
+          print('Finder, ' + dg.port.toString());
+
+          if (data.contains('alpacaport')) {
+            var decoded = json.decode(data);
+
+            int port = (decoded as Map)['alpacaport'];
+            Found_Devices.add(DeviceEndPoint(dg.address, port));
+          }
+        }
+      });
+
+      if (NetworkInterface.listSupported) {
+        NetworkInterface.list(type: InternetAddressType.IPv4).then((value) => {
+              value.forEach((element) {
+                element.addresses.forEach((address) {
+                  udpSocket.send(utf8.encode(discoveryMessage), _get_broadcast_address(address), 32227);
+                });
+              })
+            });
+      } else {
+        udpSocket.send(utf8.encode(discoveryMessage),
+            InternetAddress('255.255.255.255'), 32227);
+      }
+    });
+  }
+  InternetAddress _get_broadcast_address(InternetAddress address){
+    //Really basic, assumes a mask of 255.255.255.0
+    return InternetAddress.fromRawAddress(Uint8List.fromList([address.rawAddress[0], address.rawAddress[1], address.rawAddress[2], 255]));
   }
 }
