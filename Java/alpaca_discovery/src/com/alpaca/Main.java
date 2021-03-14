@@ -1,13 +1,21 @@
 package com.alpaca;
 
+import java.io.IOException;
 import java.net.SocketException;
 
 public class Main {
 
     public static void main(String[] args)  {
-        Finder finder = null;
+
         try {
-            finder = new Finder();
+            Responder responder = new Responder();
+            responder.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Finder finder = new Finder();
             finder.run();
         } catch (SocketException e) {
             e.printStackTrace();

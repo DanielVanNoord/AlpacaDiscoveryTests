@@ -67,4 +67,8 @@ public class Finder extends Thread {
         }
         socket.close();
     }
+
+    public void end(){
+        running = false;
+    }
 }
