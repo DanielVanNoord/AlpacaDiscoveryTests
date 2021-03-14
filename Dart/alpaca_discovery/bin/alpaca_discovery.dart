@@ -7,4 +7,5 @@ void main(List<String> arguments) async {
   alpaca_discovery.Finder finder = new alpaca_discovery.Finder();
 
   finder.search_ipv4();
+  finder.search_ipv6();
 }

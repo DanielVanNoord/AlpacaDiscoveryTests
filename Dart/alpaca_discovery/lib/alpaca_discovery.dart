@@ -99,28 +99,14 @@ class Finder {
         .then((RawDatagramSocket udpSocket) {
       udpSocket.broadcastEnabled = true;
 
-      udpSocket.forEach((RawSocketEvent event) {
-        if (event == RawSocketEvent.read) {
-          final dg = udpSocket.receive();
-          final data = utf8.decode(dg.data);
-          print('Finder, ' + data);
-          print('Finder, ' + dg.address.toString());
-          print('Finder, ' + dg.port.toString());
-
-          if (data.contains('alpacaport')) {
-            var decoded = json.decode(data);
-
-            int port = (decoded as Map)['alpacaport'];
-            Found_Devices.add(DeviceEndPoint(dg.address, port));
-          }
-        }
-      });
+      _handle_finder_response(udpSocket);
 
       if (NetworkInterface.listSupported) {
         NetworkInterface.list(type: InternetAddressType.IPv4).then((value) => {
               value.forEach((element) {
                 element.addresses.forEach((address) {
-                  udpSocket.send(utf8.encode(discoveryMessage), _get_broadcast_address(address), 32227);
+                  udpSocket.send(utf8.encode(discoveryMessage),
+                      _get_broadcast_address(address), 32227);
                 });
               })
             });
@@ -130,8 +116,42 @@ class Finder {
       }
     });
   }
-  InternetAddress _get_broadcast_address(InternetAddress address){
+
+  void search_ipv6() {
+    RawDatagramSocket.bind(InternetAddress.anyIPv6, 0)
+        .then((RawDatagramSocket udpSocket) {
+      _handle_finder_response(udpSocket);
+
+      udpSocket.send(utf8.encode(discoveryMessage),
+          InternetAddress('ff12::00a1:9aca'), 32227);
+    });
+  }
+
+  void _handle_finder_response(RawDatagramSocket udpSocket) {
+    udpSocket.forEach((RawSocketEvent event) {
+      if (event == RawSocketEvent.read) {
+        final dg = udpSocket.receive();
+        final data = utf8.decode(dg.data);
+        print('Finder, ' + data);
+        print('Finder, ' + dg.address.toString());
+
+        if (data.contains('alpacaport')) {
+          var decoded = json.decode(data);
+
+          int port = (decoded as Map)['alpacaport'];
+          Found_Devices.add(DeviceEndPoint(dg.address, port));
+        }
+      }
+    });
+  }
+
+  InternetAddress _get_broadcast_address(InternetAddress address) {
     //Really basic, assumes a mask of 255.255.255.0
-    return InternetAddress.fromRawAddress(Uint8List.fromList([address.rawAddress[0], address.rawAddress[1], address.rawAddress[2], 255]));
+    return InternetAddress.fromRawAddress(Uint8List.fromList([
+      address.rawAddress[0],
+      address.rawAddress[1],
+      address.rawAddress[2],
+      255
+    ]));
   }
 }
