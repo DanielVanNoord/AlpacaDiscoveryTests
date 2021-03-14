@@ -64,7 +64,6 @@ public class Finder extends Thread {
 
             System.out.println(address);
             System.out.println(new String(packet.getData(), 0, packet.getLength()));
-            packet = new DatagramPacket(response_buffer, response_buffer.length, address, port);
         }
         socket.close();
     }
