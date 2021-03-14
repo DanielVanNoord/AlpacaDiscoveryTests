@@ -1,6 +1,5 @@
 package com.alpaca;
 
-import java.io.IOException;
 import java.net.SocketException;
 
 public class Main {

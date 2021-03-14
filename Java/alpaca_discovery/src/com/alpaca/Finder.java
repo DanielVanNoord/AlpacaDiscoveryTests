@@ -43,17 +43,12 @@ public class Finder extends Thread {
             e.printStackTrace();
         }
 
-
         try {
-            localhost = InetAddress.getLocalHost();
-            for (InetAddress address : InetAddress.getAllByName(localhost.getCanonicalHostName())
-            ) {
-
-            }
-        } catch (UnknownHostException e) {
+            DatagramPacket message = new DatagramPacket(alpaca_discovery_bytes, alpaca_discovery_bytes.length, InetAddress.getByName("ff12::00a1:9aca"), 32227);
+            socket.send(message);
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
 
         while (running) {
             DatagramPacket packet
@@ -68,7 +63,6 @@ public class Finder extends Thread {
             int port = packet.getPort();
 
             System.out.println(address);
-            System.out.println(port);
             System.out.println(new String(packet.getData(), 0, packet.getLength()));
             packet = new DatagramPacket(response_buffer, response_buffer.length, address, port);
         }
