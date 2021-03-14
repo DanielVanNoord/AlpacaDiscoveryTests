@@ -3,25 +3,47 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
+
+#ifdef _WIN32
+#pragma comment(lib, "Ws2_32.lib")
+#include <io.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#ifndef socklen_t
+#define socklen_t int
+#endif
+#else
+#include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#endif
 
-#define PORT     32227
+#define PORT 32227
 
 int main(int argc, char *argv[])
 {
-	char* mess = "alpacadiscovery1";
+	char *mess = "alpacadiscovery1";
 
 	struct sockaddr_in servaddr, cliaddr, from;
 	int broadcastSock, n;
 	socklen_t fromlen;
 	char buf[1024];
 
-	if ((broadcastSock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+#ifdef _WIN32
+	WSADATA wsa;
+	
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+	{
+		perror("WSAStartup Failed");
+		exit(EXIT_FAILURE);
+	}
+#endif
+
+	if ((broadcastSock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+	{
 		perror("socket creation failed");
 		exit(EXIT_FAILURE);
 	}
@@ -35,11 +57,11 @@ int main(int argc, char *argv[])
 	cliaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	cliaddr.sin_port = htons(0);
 
-	if (setsockopt(broadcastSock, SOL_SOCKET, (SO_BROADCAST), &(int) { 1 }, sizeof(int)) < 0)
+	if (setsockopt(broadcastSock, SOL_SOCKET, (SO_BROADCAST), &(int){1}, sizeof(int)) < 0)
 		perror("setsockopt(SO_BROADCAST) failed");
 
 	if (bind(broadcastSock, (const struct sockaddr *)&cliaddr,
-		sizeof(cliaddr)) < 0)
+			 sizeof(cliaddr)) < 0)
 	{
 		perror("bind failed");
 		exit(EXIT_FAILURE);
@@ -48,9 +70,11 @@ int main(int argc, char *argv[])
 	if (sendto(broadcastSock, mess, strlen(mess), 0, (struct sockaddr *)&servaddr, sizeof(struct sockaddr_in)) < 0)
 		perror("sendto");
 	fromlen = sizeof(struct sockaddr_in);
-	while (1) {
+	while (1)
+	{
 		n = recvfrom(broadcastSock, buf, 1024, 0, (struct sockaddr *)&from, &fromlen);
-		if (n < 0) perror("recvfrom");
+		if (n < 0)
+			perror("recvfrom");
 
 		char str[INET_ADDRSTRLEN];
 
