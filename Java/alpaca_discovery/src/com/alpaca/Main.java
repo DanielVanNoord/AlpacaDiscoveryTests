@@ -15,6 +15,13 @@ public class Main {
         }
 
         try {
+            ResponderIPv6 responder = new ResponderIPv6();
+            responder.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
             Finder finder = new Finder();
             finder.run();
         } catch (SocketException e) {
