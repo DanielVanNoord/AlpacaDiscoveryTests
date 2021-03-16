@@ -25,5 +25,7 @@ Dart/alpaca_discovery/doc/api/
 Java/alpaca_discovery/out/
 
 *.iml
+*.exe
+*.obj
 
 Java/alpaca_discovery/.idea/
