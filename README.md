@@ -47,9 +47,9 @@ After this is flashed on a board it will print any received requests via the boa
 
 ## CSample
 
-This is a simple C Device and Client sample (IPv4 only) that runs on Linux. It was tested on Ubuntu 18.04, Manjaro (Arch) and Raspberry Pi OS. Both require gcc and binutils to build. To build simply run "gcc -o client client.c" and "gcc -o device device.c". To start simply run the output program in a terminal. The Device will listen for any discovery packets and print what it receives to the terminal. It will then respond. The client will send out the discovery request and print any response. 
+This is a simple C Device and Client sample (IPv4 only) that runs on Linux (gcc and clang), Windows (MSVC cl.exe compiler) and macOS (gcc, only lightly tested). It was tested on Ubuntu 18.04, Manjaro (Arch), Raspberry Pi OS, Windows 10 and macOS Catalina. To build simply run "gcc -o client client.c" and "gcc -o device device.c", substituting clang or cl for gcc as needed. To start simply run the output program in a terminal. The Device will listen for any discovery packets and print what it receives to the terminal. It will then respond. The client will send out the discovery request and print any response. 
 
-Note that the C Client currently sends the discovery broadcast to the 255.255.255.255 address. This does not work as well as sending broadcasts to each network adapter's broadcast address as some adapters and networking gear may not forward generic packets.
+Note that the C Client currently now sends the discovery message via adapter specific broadcast on Linux, Windows and macOS. This uses GetAdaptersInfo for Windows and getifaddrs for other operating systems.
 
 ## Go
 
