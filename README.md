@@ -19,7 +19,7 @@ All of these examples have been tested on a variety of networks and operating sy
 Note that this is a UDP protocol, packets can be lost or dropped. If you can't find a Device try sending the request again.
 
 ## Arduino
-A set of examples that run on several different microcontrollers using the Arduino libraries and IDE. These are all WiFi based but I plan to add some wired examples. In addition I plan to add examples for additional microcontroller stacks as well as additional microcontrollers.
+A set of examples that run on several different microcontrollers using the Arduino libraries and IDE. In addition I plan to add examples for additional microcontroller stacks as well as additional microcontrollers.
 
 ### ESP32
 
@@ -49,7 +49,7 @@ After this is flashed on a board it will print any received requests via the boa
 
 This is a simple C Device and Client sample (IPv4 only) that runs on Linux (gcc and clang), Windows (MSVC cl.exe compiler) and macOS (gcc, only lightly tested). It was tested on Ubuntu 18.04, Manjaro (Arch), Raspberry Pi OS, Windows 10 and macOS Catalina. To build simply run "gcc -o client client.c" and "gcc -o device device.c", substituting clang or cl for gcc as needed. To start simply run the output program in a terminal. The Device will listen for any discovery packets and print what it receives to the terminal. It will then respond. The client will send out the discovery request and print any response. 
 
-Note that the C Client currently now sends the discovery message via adapter specific broadcast on Linux, Windows and macOS. This uses GetAdaptersInfo for Windows and getifaddrs for other operating systems.
+Note that the C Client now sends the discovery message via adapter specific broadcast on Linux, Windows and macOS. This uses GetAdaptersInfo for Windows and getifaddrs for other operating systems.
 
 ## Go
 
@@ -128,9 +128,8 @@ Clients MUST be able to handle responses from multiple Devices.
 Client SHOULD offer a mechanism to report or log incorrect responses. Clients SHOULD NOT try to connect to devices that respond incorrectly.
 
 # How to help?
-You can help by testing these examples on your networks to look for problems. Second you can leave comments, here or on the ASCOM forum. Also pull requests to make improvements to the examples / specification are welcome. Finally more examples are very welcome. I would like to add a Windows C example as well as Java, Node.js and more microcontrollers / microcontroller platforms. Also any other languages or frameworks are welcome.
+You can help by testing these examples on your networks to look for problems. Second you can leave comments, here or on the ASCOM forum. Also pull requests to make improvements to the examples / specification are welcome. Finally more examples are very welcome. I would like to add a Swift, Rust, Node.js and more microcontrollers / microcontroller platforms. Also any other languages or frameworks are welcome.
 
 Once the protocol is finalized we will need reference implementations and libraries for many languages and platforms. We will also need test code to ensure that both Device and Client libraries perform correctly and will work in shared contexts.
-
 
 Note that all the code in this repo is under the MIT license. Anything you submit must be under the same license or not be under copyright. 
