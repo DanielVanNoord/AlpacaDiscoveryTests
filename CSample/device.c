@@ -48,7 +48,6 @@ int main(int argc, char *argv[])
 
 	memset(&servaddr, '\0', sizeof(struct sockaddr_in));
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_family = AF_INET;
 	servaddr.sin_addr.s_addr = INADDR_ANY;
 	servaddr.sin_port = htons(DiscoveryPort);
 
