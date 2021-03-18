@@ -51,15 +51,19 @@ This is a simple C Device and Client sample (IPv4 only) that runs on Linux (gcc 
 
 Note that the C Client now sends the discovery message via adapter specific broadcast on Linux, Windows and macOS. This uses GetAdaptersInfo for Windows and getifaddrs for other operating systems.
 
-## Java
+## Dart
 
-A set of Java Finder and Responder examples. They support IPv4 and IPv6 protocols. The examples iterate over all adaptors and send correct broadcast for each adaptor.
+A set of Dart Finder and Responder examples. They support IPv4 and IPv6 protocols. The examples iterate over all adaptors and send correct broadcast for each adaptor.
 
 ## Go
 
 This is a sample go client (finder) example. It can be run with go run ./Finder.go and built with go build.
 
 This Client iterates over all network adapters on the system and sends the request to each broadcast address that it finds. This works much better than sending a single generic broadcast. 
+
+## Java
+
+A set of Java Finder and Responder examples. They support IPv4 and IPv6 protocols. The examples iterate over all adaptors and send correct broadcast for each adaptor.
 
 ## Net 
 
