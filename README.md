@@ -65,6 +65,10 @@ This Client iterates over all network adapters on the system and sends the reque
 
 A set of Java Finder and Responder examples. They support IPv4 and IPv6 protocols. The examples iterate over all adaptors and send correct broadcast for each adaptor.
 
+The Finder and Responder classes inherit from the Thread class allowing them to run in the background.
+
+The project was built in IntelliJ using Java 14.
+
 ## Net 
 
 This is an example .Net library with example Clients and Device (for .Net these will likely be drivers). This includes a .Net Standard 2.0 and .Net Framework 3.5 library that implements the protocols as well as several runtimes. The Net 3.5 was tested on Windows 7 and 10 and the Net Standard was tested via Net Core 2.0 on Windows, Linux (Ubuntu, Manjaro and Raspberry Pi OS) and OSX. It was also tested on Android and IOS (example apps coming soon) via Xamarin. 
