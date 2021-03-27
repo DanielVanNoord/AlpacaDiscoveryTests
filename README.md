@@ -8,7 +8,7 @@ In order to implement this protocol all a Client needs is the ability to send a 
 
  Once the IP Address and Alpaca port of the Device is known the Client can use the management API to query the Device and discover its supported endpoints and functions.
 
- For testing this uses port 32227 for the broadcasts and multicasts.
+ The Alpaca Discovery Protocol uses port 32227 for the broadcasts and multicasts, all devices must open that port with the correct settings (see below for details). Because the clients send from a system port (IE not 32227) they do not need to open the port with any special settings.
 
 # Examples
 
@@ -49,11 +49,13 @@ After this is flashed on a board it will print any received requests via the boa
 
 This is a simple C Device and Client sample (IPv4 only) that runs on Linux (gcc and clang), Windows (MSVC cl.exe compiler) and macOS (gcc, only lightly tested). It was tested on Ubuntu 18.04, Manjaro (Arch), Raspberry Pi OS, Windows 10 and macOS Catalina. To build simply run "gcc -o client client.c" and "gcc -o device device.c", substituting clang or cl for gcc as needed. To start simply run the output program in a terminal. The Device will listen for any discovery packets and print what it receives to the terminal. It will then respond. The client will send out the discovery request and print any response. 
 
-Note that the C Client now sends the discovery message via adapter specific broadcast on Linux, Windows and macOS. This uses GetAdaptersInfo for Windows and getifaddrs for other operating systems.
+Note: the C Client now sends the discovery message via adapter specific broadcast on Linux, Windows and macOS. This uses GetAdaptersInfo for Windows and getifaddrs for other operating systems.
 
 ## Dart
 
 A set of Dart Finder and Responder examples. They support IPv4 and IPv6 protocols. The examples iterate over all adaptors and send correct broadcast for each adaptor.
+
+The Dart example was built and tested on Dart 2.12.1.
 
 ## Go
 
