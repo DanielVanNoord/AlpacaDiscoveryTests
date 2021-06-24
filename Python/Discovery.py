@@ -10,7 +10,7 @@ from threading import Lock, Thread
 
 port = 32227  # a temporary port that I choose for testing
 AlpacaDiscovery = "alpacadiscovery1"
-AlpacaResponse = "alpacaport"
+AlpacaResponse = "AlpacaPort"
 
 lock = Lock()
 

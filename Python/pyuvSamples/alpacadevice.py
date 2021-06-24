@@ -33,7 +33,7 @@ class __async_ipv6:
 
     def __on_read(self, handle, ip_port, flags, data, error):
         if data is not None:
-            resp = "{{\"alpacaport\": {port}}}".format(port = self.__alpacaport).encode()
+            resp = "{{\"AlpacaPort\": {port}}}".format(port = self.__alpacaport).encode()
             handle.send(ip_port, resp)
 
     def __signal_cb(self, handle, signum):
@@ -59,7 +59,7 @@ class __async_ipv4:
 
     def __on_read(self, handle, ip_port, flags, data, error):
         if data is not None:
-            resp = "{{\"alpacaport\": {port}}}".format(port = self.__alpacaport).encode()
+            resp = "{{\"AlpacaPort\": {port}}}".format(port = self.__alpacaport).encode()
             handle.send(ip_port, resp)
 
     def __signal_cb(self, handle, signum):

@@ -123,7 +123,7 @@ ALPACAPORT: this is the port that the Alpaca REST API is available on. This must
 
 DISCOVERY: this is the message that is sent by the client via broadcast on the PORT. Currently this message is simply *alpaca discovery*. For example in C the message could be defined as `char* DISCOVERY = "alpacadiscovery1";`
 
-RESPONSE: this is the message that the Device sends back via unicast to the client. This message include the port that the Alpaca API is available on the Device. This is a valid json message of the form *{"alpacaport": port}* where port is the port number of the Alpaca API. For example in c this could be set to a char* with `sprintf(response, "{\"alpacaport\": %d}", ALPACAPORT);` Because this is a json message we can add additional named terms as needed. Clients must be able to ignore any additional json fields that they do not know how to handle.
+RESPONSE: this is the message that the Device sends back via unicast to the client. This message include the port that the Alpaca API is available on the Device. This is a valid json message of the form *{"AlpacaPort": port}* where port is the port number of the Alpaca API. For example in c this could be set to a char* with `sprintf(response, "{\"AlpacaPort\": %d}", ALPACAPORT);` Because this is a json message we can add additional named terms as needed. Clients must be able to ignore any additional json fields that they do not know how to handle.
 
 ### Specification (work in progress)
 

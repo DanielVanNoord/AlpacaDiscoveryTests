@@ -76,7 +76,7 @@ void setup()
 
             // send a reply, to the IP address and port that sent us the packet we received
             // on a real system this would be the port the Alpaca API was on
-            packet.printf("{\"alpacaport\": %d}", alpacaPort);
+            packet.printf("{\"AlpacaPort\": %d}", alpacaPort);
         });
     }
 }

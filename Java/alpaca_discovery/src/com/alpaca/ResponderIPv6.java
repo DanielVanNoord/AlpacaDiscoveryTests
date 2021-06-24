@@ -26,7 +26,7 @@ public class ResponderIPv6 extends Thread {
         running = true;
 
         String alpaca_discovery_string = "alpacadiscovery1";
-        byte[] alpaca_discovery_response = "{\"alpacaport\": 10321}".getBytes(StandardCharsets.UTF_8);
+        byte[] alpaca_discovery_response = "{\"AlpacaPort\": 10321}".getBytes(StandardCharsets.UTF_8);
         byte[] response_buffer = new byte[255];
 
         while (running) {

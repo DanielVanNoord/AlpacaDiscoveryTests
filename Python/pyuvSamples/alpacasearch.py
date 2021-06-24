@@ -12,9 +12,9 @@ __lock = Lock()
 
 def print_data(data, addr):
     __lock.acquire()
-    if 'alpacaport' in str(data):
+    if 'AlpacaPort' in str(data):
         jsondata = json.loads(data)
-        print(addr, ":",  jsondata['alpacaport'])
+        print(addr, ":",  jsondata['AlpacaPort'])
     __lock.release()
 
 class __async_ipv6_search:

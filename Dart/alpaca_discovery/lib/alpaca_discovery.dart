@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 final String discoveryMessage = 'alpacadiscovery1';
-final String response = '{"alpacaport": 9823}';
+final String response = '{"AlpacaPort": 9823}';
 final String multicast_group = 'ff12::00a1:9aca';
 
 bool is_discovery_message(String message) {
@@ -135,10 +135,10 @@ class Finder {
         print('Finder, ' + data);
         print('Finder, ' + dg.address.toString());
 
-        if (data.contains('alpacaport')) {
+        if (data.contains('AlpacaPort')) {
           var decoded = json.decode(data);
 
-          int port = (decoded as Map)['alpacaport'];
+          int port = (decoded as Map)['AlpacaPort'];
           Found_Devices.add(DeviceEndPoint(dg.address, port));
         }
       }
