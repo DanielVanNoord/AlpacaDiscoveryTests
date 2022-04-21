@@ -254,7 +254,7 @@ namespace AlpacaDiscovery
             }
             catch (Exception ex)
             {
-                //Logging goes here
+                Console.WriteLine($"Error during callback: {ex.Message}");
             }
         }
 
