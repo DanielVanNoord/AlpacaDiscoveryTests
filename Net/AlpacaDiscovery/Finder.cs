@@ -16,6 +16,9 @@ namespace AlpacaDiscovery
     {
         private readonly Action<IPEndPoint> callbackFunction;
 
+        private readonly Dictionary<IPAddress, UdpClient> IPv4Clients = new Dictionary<IPAddress, UdpClient>();
+        private readonly Dictionary<IPAddress, UdpClient> IPv6Clients = new Dictionary<IPAddress, UdpClient>();
+
         /// <summary>
         /// A cache of all endpoints found by the server
         /// </summary>
@@ -53,22 +56,6 @@ namespace AlpacaDiscovery
         /// </summary>
         private void SearchIPv4()
         {
-            var IPv4Client = new UdpClient();
-
-            IPv4Client.EnableBroadcast = true;
-            IPv4Client.MulticastLoopback = false;
-
-            if (PlatformDetection.IsWindows)
-            {
-                int SIO_UDP_CONNRESET = -1744830452;
-                IPv4Client.Client.IOControl((IOControlCode)SIO_UDP_CONNRESET, new byte[] { 0, 0, 0, 0 }, null);
-            }
-
-            //0 tells OS to give us a free ephemeral port
-            IPv4Client.Client.Bind(new IPEndPoint(IPAddress.Any, 0));
-
-            IPv4Client.BeginReceive(new AsyncCallback(ReceiveCallback), IPv4Client);
-
             NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
             foreach (NetworkInterface adapter in adapters)
             {
@@ -97,8 +84,19 @@ namespace AlpacaDiscovery
                                 continue;
                             }
 
+                            if (!IPv4Clients.ContainsKey(uni.Address))
+                            {
+                                IPv4Clients.Add(uni.Address, NewIPv4Client(uni.Address));
+                            }
+
+                            if (!IPv4Clients[uni.Address].Client.IsBound)
+                            {
+                                IPv4Clients.Remove(uni.Address);
+                                continue;
+                            }
+
                             // Local host addresses (127.*.*.*) may have a null mask in Net Framework. We do want to search these. The correct mask is 255.0.0.0.
-                            IPv4Client.Send(Constants.Message, Constants.Message.Length, new IPEndPoint(GetBroadcastAddress(uni.Address, uni.IPv4Mask ?? IPAddress.Parse("255.0.0.0")), Constants.DiscoveryPort));
+                            IPv4Clients[uni.Address].Send(Constants.Message, Constants.Message.Length, new IPEndPoint(GetBroadcastAddress(uni.Address, uni.IPv4Mask ?? IPAddress.Parse("255.0.0.0")), Constants.DiscoveryPort));
                         }
                     }
                 }
@@ -112,63 +110,86 @@ namespace AlpacaDiscovery
         private void SearchIPv6()
         {
             // Windows needs to bind a socket to each adapter explicitly
-            if (PlatformDetection.IsWindows)
-            {
-                List<UdpClient> clients = new List<UdpClient>();
 
-                foreach (var adapter in NetworkInterface.GetAllNetworkInterfaces())
+
+            foreach (var adapter in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (adapter.OperationalStatus != OperationalStatus.Up)
+                    continue;
+
+                if (adapter.Supports(NetworkInterfaceComponent.IPv6) && adapter.SupportsMulticast)
                 {
-                    if (adapter.OperationalStatus != OperationalStatus.Up)
+                    IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
+                    if (adapterProperties == null)
                         continue;
 
-                    if (adapter.Supports(NetworkInterfaceComponent.IPv6) && adapter.SupportsMulticast)
+                    UnicastIPAddressInformationCollection uniCast = adapterProperties.UnicastAddresses;
+
+                    if (uniCast.Count > 0)
                     {
-                        IPInterfaceProperties adapterProperties = adapter.GetIPProperties();
-                        if (adapterProperties == null)
-                            continue;
-
-                        UnicastIPAddressInformationCollection uniCast = adapterProperties.UnicastAddresses;
-
-                        if (uniCast.Count > 0)
+                        foreach (UnicastIPAddressInformation uni in uniCast)
                         {
-                            foreach (UnicastIPAddressInformation uni in uniCast)
+                            if (uni.Address.AddressFamily != AddressFamily.InterNetworkV6)
+                                continue;
+
+                            //Only use LinkLocal or LocalHost addresses
+                            if (!uni.Address.IsIPv6LinkLocal && uni.Address != IPAddress.Parse("::1"))
+                                continue;
+
+                            try
                             {
-                                if (uni.Address.AddressFamily != AddressFamily.InterNetworkV6)
-                                    continue;
-
-                                //Only use LinkLocal or LocalHost addresses
-                                if (!uni.Address.IsIPv6LinkLocal && uni.Address != IPAddress.Parse("::1"))
-                                    continue;
-
-                                try
+                                if (!IPv6Clients.ContainsKey(uni.Address))
                                 {
-                                    clients.Add(NewClient(uni.Address, 0));
+                                    IPv6Clients.Add(uni.Address, NewIPv6Client(uni.Address));
                                 }
-                                catch (SocketException)
+
+                                if (!IPv6Clients[uni.Address].Client.IsBound)
                                 {
+                                    IPv6Clients.Remove(uni.Address);
+                                    continue;
                                 }
+
+                                IPv6Clients[uni.Address].Send(Constants.Message, Constants.Message.Length, new IPEndPoint(IPAddress.Parse(Constants.MulticastGroup), Constants.DiscoveryPort));
+
+                            }
+                            catch (SocketException)
+                            {
                             }
                         }
                     }
                 }
             }
-            else
-            {
-                // Linux seems to handle this correctly
-                var client = NewClient(IPAddress.IPv6Any, 0);
-            }
         }
 
-        private UdpClient NewClient(IPAddress host, int port)
+        private UdpClient NewIPv4Client(IPAddress host)
+        {
+            var client = new UdpClient();
+
+            client.EnableBroadcast = true;
+            client.MulticastLoopback = false;
+
+            if (PlatformDetection.IsWindows)
+            {
+                int SIO_UDP_CONNRESET = -1744830452;
+                client.Client.IOControl((IOControlCode)SIO_UDP_CONNRESET, new byte[] { 0, 0, 0, 0 }, null);
+            }
+
+            //0 tells OS to give us a free ephemeral port
+            client.Client.Bind(new IPEndPoint(IPAddress.Any, 0));
+
+            client.BeginReceive(new AsyncCallback(ReceiveCallback), client);
+
+            return client;
+        }
+
+        private UdpClient NewIPv6Client(IPAddress host)
         {
             var client = new UdpClient(AddressFamily.InterNetworkV6);
 
             //0 tells OS to give us a free ephemeral port
-            client.Client.Bind(new IPEndPoint(host, port));
+            client.Client.Bind(new IPEndPoint(host, 0));
 
             client.BeginReceive(new AsyncCallback(ReceiveCallback), client);
-
-            client.Send(Constants.Message, Constants.Message.Length, new IPEndPoint(IPAddress.Parse(Constants.MulticastGroup), Constants.DiscoveryPort));
 
             return client;
         }
