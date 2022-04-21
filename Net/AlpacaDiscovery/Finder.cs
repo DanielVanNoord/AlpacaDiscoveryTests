@@ -87,7 +87,15 @@ namespace AlpacaDiscovery
                         foreach (UnicastIPAddressInformation uni in uniCast)
                         {
                             if (uni.Address.AddressFamily != AddressFamily.InterNetwork)
+                            {
                                 continue;
+                            }
+
+                            if (uni.IPv4Mask == IPAddress.Parse("255.255.255.255"))
+                            {
+                                //No broadcast on single device endpoint
+                                continue;
+                            }
 
                             // Local host addresses (127.*.*.*) may have a null mask in Net Framework. We do want to search these. The correct mask is 255.0.0.0.
                             IPv4Client.Send(Constants.Message, Constants.Message.Length, new IPEndPoint(GetBroadcastAddress(uni.Address, uni.IPv4Mask ?? IPAddress.Parse("255.0.0.0")), Constants.DiscoveryPort));
