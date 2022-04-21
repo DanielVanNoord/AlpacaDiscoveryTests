@@ -58,6 +58,12 @@ namespace AlpacaDiscovery
             IPv4Client.EnableBroadcast = true;
             IPv4Client.MulticastLoopback = false;
 
+            if (PlatformDetection.IsWindows)
+            {
+                int SIO_UDP_CONNRESET = -1744830452;
+                IPv4Client.Client.IOControl((IOControlCode)SIO_UDP_CONNRESET, new byte[] { 0, 0, 0, 0 }, null);
+            }
+
             //0 tells OS to give us a free ethereal port
             IPv4Client.Client.Bind(new IPEndPoint(IPAddress.Any, 0));
 
