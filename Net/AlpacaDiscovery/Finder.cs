@@ -61,7 +61,7 @@ namespace AlpacaDiscovery
             //0 tells OS to give us a free ethereal port
             IPv4Client.Client.Bind(new IPEndPoint(IPAddress.Any, 0));
 
-            IPv4Client.BeginReceive(ReceiveCallback, IPv4Client);
+            IPv4Client.BeginReceive(new AsyncCallback(ReceiveCallback), IPv4Client);
 
             NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
             foreach (NetworkInterface adapter in adapters)
@@ -153,7 +153,7 @@ namespace AlpacaDiscovery
             //0 tells OS to give us a free ethereal port
             client.Client.Bind(new IPEndPoint(host, port));
 
-            client.BeginReceive(ReceiveCallback, client);
+            client.BeginReceive(new AsyncCallback(ReceiveCallback), client);
 
             client.Send(Constants.Message, Constants.Message.Length, new IPEndPoint(IPAddress.Parse(Constants.MulticastGroup), Constants.DiscoveryPort));
 
@@ -202,7 +202,7 @@ namespace AlpacaDiscovery
                 string ReceiveString = Encoding.ASCII.GetString(udpClient.EndReceive(ar, ref endpoint));
 
                 // Configure the UdpClient class to accept more messages, if they arrive
-                udpClient.BeginReceive(ReceiveCallback, udpClient);
+                udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), udpClient);
 
                 //Do not report your own transmissions
                 if (ReceiveString.Contains(Constants.ResponseString))
