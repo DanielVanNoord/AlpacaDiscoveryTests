@@ -49,7 +49,7 @@ namespace AlpacaDiscovery
         /// <summary>
         /// Send out discovery message on each IPv4 broadcast address
         /// This dual targets NetStandard 2.0 and NetFX 3.5 so no Async Await
-        /// Broadcasts on each adapters address as per Windows / Linux documentation 
+        /// Broadcasts on each adapters address as per Windows / Linux documentation
         /// </summary>
         private void SearchIPv4()
         {
@@ -64,7 +64,7 @@ namespace AlpacaDiscovery
                 IPv4Client.Client.IOControl((IOControlCode)SIO_UDP_CONNRESET, new byte[] { 0, 0, 0, 0 }, null);
             }
 
-            //0 tells OS to give us a free ethereal port
+            //0 tells OS to give us a free ephemeral port
             IPv4Client.Client.Bind(new IPEndPoint(IPAddress.Any, 0));
 
             IPv4Client.BeginReceive(new AsyncCallback(ReceiveCallback), IPv4Client);
@@ -138,7 +138,6 @@ namespace AlpacaDiscovery
                                 }
                                 catch (SocketException)
                                 {
-
                                 }
                             }
                         }
@@ -156,7 +155,7 @@ namespace AlpacaDiscovery
         {
             var client = new UdpClient(AddressFamily.InterNetworkV6);
 
-            //0 tells OS to give us a free ethereal port
+            //0 tells OS to give us a free ephemeral port
             client.Client.Bind(new IPEndPoint(host, port));
 
             client.BeginReceive(new AsyncCallback(ReceiveCallback), client);
@@ -173,7 +172,7 @@ namespace AlpacaDiscovery
         {
             if (searchIPv4) { SearchIPv4(); }
 
-            if (searchIPv6) { SearchIPv6(); }       
+            if (searchIPv6) { SearchIPv6(); }
         }
 
         // This turns the unicast address and the subnet into the broadcast address for that range
@@ -224,7 +223,7 @@ namespace AlpacaDiscovery
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 //Logging goes here
             }
@@ -235,7 +234,7 @@ namespace AlpacaDiscovery
         /// </summary>
         public void Search(bool IPv4 = true, bool IPv6 = true)
         {
-            if(!IPv4 && !IPv6)
+            if (!IPv4 && !IPv6)
             {
                 throw new ArgumentException("You must search on one or more protocol types.");
             }
