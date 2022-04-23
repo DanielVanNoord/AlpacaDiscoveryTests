@@ -226,17 +226,15 @@ namespace AlpacaDiscovery
         // This callback is shared between IPv4 and IPv6
         private void ReceiveCallback(IAsyncResult ar)
         {
+            UdpClient udpClient = null;
             try
             {
-                UdpClient udpClient = (UdpClient)ar.AsyncState;
+                udpClient = (UdpClient)ar.AsyncState;
 
                 IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, Constants.DiscoveryPort);
 
                 // Obtain the UDP message body and convert it to a string, with remote IP address attached as well
                 string ReceiveString = Encoding.ASCII.GetString(udpClient.EndReceive(ar, ref endpoint));
-
-                // Configure the UdpClient class to accept more messages, if they arrive
-                udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), udpClient);
 
                 //Do not report your own transmissions
                 if (ReceiveString.Contains(Constants.ResponseString))
@@ -255,6 +253,18 @@ namespace AlpacaDiscovery
             catch (Exception ex)
             {
                 Console.WriteLine($"Error during callback: {ex.Message}");
+            }
+            finally
+            {
+                try
+                {
+                    // Configure the UdpClient class to accept more messages, if they arrive
+                    udpClient?.BeginReceive(new AsyncCallback(ReceiveCallback), udpClient);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error restarting search: {ex.Message}");
+                }
             }
         }
 
