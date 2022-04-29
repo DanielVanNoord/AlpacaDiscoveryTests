@@ -68,6 +68,10 @@ def respond_ipv6():
 if __name__ == "__main__":
     # really basic threading just to get the testing started 
     threadv6 = Thread(target = respond_ipv6)
+    threadv6.daemon = True
     threadv6.start()     
     thread = Thread(target = respond_ipv4)
-    thread.start()               
+    thread.daemon = True  
+    thread.start()      
+    print('Press enter to exit')   
+    input()
