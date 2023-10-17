@@ -1,6 +1,6 @@
 # Alpaca LAN Discovery Tests
 
-This is documentation and sample test implementations for the new ASCOM Alpaca discovery protocol. This enables clients to find Alpaca devices within a Local Area Network (LAN). It is based on UDP and is designed to be as light weight and easy to implement as possible. It uses a known broadcast port and a known message / response. All information about the devices can then be retrieved via the management API.
+This is documentation and sample test implementations for the ASCOM Alpaca discovery protocol. This enables clients to find Alpaca devices within a Local Area Network (LAN). It is based on UDP and is designed to be as light weight and easy to implement as possible. It uses a known broadcast port and a known message / response. All information about the devices can then be retrieved via the management API.
 
 For the following document Device will refer to something (a driver or device) that exposes the Alpaca interface and Client will refer to client applications that want to locate and use the Device's API(s).  
 
@@ -47,7 +47,7 @@ After this is flashed on a board it will print any received requests via the boa
 
 ## CSample
 
-This is a simple C Device and Client sample (IPv4 only) that runs on Linux (gcc and clang), Windows (MSVC cl.exe compiler) and macOS (gcc, only lightly tested). It was tested on Ubuntu 18.04, Manjaro (Arch), Raspberry Pi OS, Windows 10 and macOS Catalina. To build simply run "gcc -o client client.c" and "gcc -o device device.c", substituting clang or cl for gcc as needed. To start simply run the output program in a terminal. The Device will listen for any discovery packets and print what it receives to the terminal. It will then respond. The client will send out the discovery request and print any response. 
+This is a simple C Device and Client sample (IPv4 only) that runs on Linux (gcc and clang), Windows (MSVC cl.exe compiler) and macOS (gcc, only lightly tested). It was tested on Ubuntu 18.04 - 22.04, Manjaro (Arch), Raspberry Pi OS, Windows 10 and macOS Catalina. To build simply run "gcc -o client client.c" and "gcc -o device device.c", substituting clang or cl for gcc as needed. To start simply run the output program in a terminal. The Device will listen for any discovery packets and print what it receives to the terminal. It will then respond. The client will send out the discovery request and print any response. 
 
 Note: the C Client now sends the discovery message via adapter specific broadcast on Linux, Windows and macOS. This uses GetAdaptersInfo for Windows and getifaddrs for other operating systems.
 
@@ -125,7 +125,7 @@ DISCOVERY: this is the message that is sent by the client via broadcast on the P
 
 RESPONSE: this is the message that the Device sends back via unicast to the client. This message include the port that the Alpaca API is available on the Device. This is a valid json message of the form *{"AlpacaPort": port}* where port is the port number of the Alpaca API. For example in c this could be set to a char* with `sprintf(response, "{\"AlpacaPort\": %d}", ALPACAPORT);` Because this is a json message we can add additional named terms as needed. Clients must be able to ignore any additional json fields that they do not know how to handle.
 
-### Specification (work in progress)
+### Specification
 
 Devices and Clients MUST come configured to use the PORT for broadcasts by default. Devices and Clients MUST provide a mechanism for the end user to change the used PORT if this is required on their network. Devices MUST allow the ALPACAPORT to be changed by the end user to handle the Device being behind a proxy.
 
